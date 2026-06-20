@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}AgriNex — Agricultural Monitoring System{% endblock %}</title>
+  <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='images/agrinex-icon-exact.svg') }}">
+  <link rel="manifest" href="/static/manifest.json">
+  <meta name="theme-color" content="#1b4d2c">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="AgriNex">
+  <link rel="apple-touch-icon" href="{{ url_for('static', filename='images/agrinex-icon-exact.svg') }}">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+  <style>
+    /* ─────────────────────────────────────────────────────────────────────────
+       AGRINEX PREMIUM DESIGN SYSTEM (Outfit Font & Cream-Forest Theme)
+       ───────────────────────────────────────────────────────────────────────── */
+    :root {
+      --bg-cream: #f6f5f0;           /* Soft light cream background */
+      --surface-white: #ffffff;      /* Clean white surfaces */
+      --primary-green: #1b4d2c;      /* Deep agricultural green */
+      --leaf-green: #2ecc71;         /* Natural leaf green */
+      --wheat-gold: #e5a93b;         /* Wheat gold */
+      --earth-brown: #8c6239;        /* Soft earth brown */
+      --text-dark: #1b261e;          /* Clean dark text */
+      --text-muted: #627267;         /* Sage-charcoal muted text */
+      --border-color: rgba(27, 77, 44, 0.08); /* Soft organic borders */
+      --accent-green: #2ecc71;       /* Crop Green badge color */
+      --accent-gold: #e5a93b;        /* Cereal Gold badge color */
+      --font-family: 'Outfit', 'Segoe UI', -apple-system, sans-serif;
+      --card-shadow: 0 10px 30px rgba(27, 77, 44, 0.04), 0 2px 8px rgba(0, 0, 0, 0.02);
+      --hover-shadow: 0 16px 40px rgba(27, 77, 44, 0.08), 0 4px 12px rgba(0, 0, 0, 0.03);
+    }
+
+    body { 
+      background-color: var(--bg-cream); 
+      color: var(--text-dark);
+      font-family: var(--font-family); 
+      min-height: 100vh;
+      margin: 0;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Ambient natural background gradient glow (subtle green leaf light) */
+    body::before {
+      content: "";
+      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+      background: radial-gradient(circle at 60% 15%, rgba(46, 204, 113, 0.05), transparent 70%);
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: var(--bg-cream); }
+    ::-webkit-scrollbar-thumb { background: rgba(27, 77, 44, 0.15); border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--primary-green); }
+
+    /* Light Theme Leaflet Popups */
+    .leaflet-popup-content-wrapper {
+      background: var(--surface-white) !important;
+      border: 1px solid var(--border-color);
+      color: var(--text-dark) !important;
+      border-radius: 14px;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08) !important;
+    }
+    .leaflet-popup-tip {
+      background: var(--surface-white) !important;
+      border: 1px solid var(--border-color);
+    }
+    .leaflet-popup-close-button {
+      color: var(--text-muted) !important;
+    }
+    .leaflet-popup-content {
+      margin: 14px 18px !important;
+      font-family: var(--font-family) !important;
+      font-size: 0.88rem !important;
+      color: var(--text-dark) !important;
+    }
+
+    /* MOBILE TOP BAR */
+    .mobile-header {
+      display: none;
+      background: var(--primary-green);
+      padding: 15px 20px;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      position: fixed;
+      top: 0; left: 0; width: 100%;
+      z-index: 1001;
+    }
+    .mobile-brand {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #fff;
+      text-decoration: none;
+      letter-spacing: 0.5px;
+    }
+    .mobile-brand i { color: var(--leaf-green); margin-right: 6px; }
+    .mobile-brand span { color: #fff; font-weight: 300; }
+    
+    .menu-toggle {
+      background: none;
+      border: none;
+      color: #fff;
+      font-size: 1.4rem;
+      cursor: pointer;
+      padding: 0;
+    }
+
+    /* SIDEBAR (Deep Forest Green) */
+    .sidebar {
+      position: fixed; top: 0; left: 0; height: 100vh; width: 260px;
+      background: var(--primary-green);
+      color: #fff; z-index: 1000;
+      display: flex; flex-direction: column; padding: 0;
+      border-right: 1px solid rgba(27, 77, 44, 0.1);
+      transition: transform 0.3s ease;
+    }
+    
+    .sidebar-brand {
+      padding: 28px 24px; font-size: 1.35rem; font-weight: 700;
+      letter-spacing: 0.5px;
+      display: flex; align-items: center; gap: 10px;
+      color: #fff !important;
+    }
+    .sidebar-brand i {
+      color: var(--leaf-green);
+      font-size: 1.5rem;
+      filter: drop-shadow(0 0 6px rgba(46, 204, 113, 0.4));
+    }
+    .sidebar-brand span { 
+      color: #fff; 
+      font-weight: 300;
+      opacity: 0.95;
+    }
+
+    .sidebar nav { flex: 1; padding: 12px 14px; }
+    
+    /* Curved glassmorphism navigation links */
+    .sidebar nav a {
+      display: flex; align-items: center; gap: 14px;
+      color: rgba(255, 255, 255, 0.65); text-decoration: none;
+      padding: 12px 18px; transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); 
+      font-size: 0.98rem; font-weight: 500;
+      border-radius: 12px; margin-bottom: 8px;
+    }
+    
+    .sidebar nav a:hover {
+      color: #fff; 
+      background: rgba(255, 255, 255, 0.08);
+      padding-left: 22px;
+    }
+    
+    .sidebar nav a.active {
+      color: var(--primary-green) !important; 
+      background: var(--surface-white) !important;
+      font-weight: 700;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+    .sidebar nav a i { width: 22px; text-align: center; font-size: 1.15rem; }
+    .sidebar nav a.active i { color: var(--primary-green); }
+    
+    .sidebar-footer {
+      padding: 20px 24px; font-size: 0.78rem; 
+      color: rgba(255, 255, 255, 0.4);
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      font-family: monospace;
+    }
+
+    /* MAIN CONTENT AREA */
+    .main-content { margin-left: 260px; min-height: 100vh; padding: 35px; transition: all 0.3s ease; }
+
+    /* PAGE HEADER (Light Cream panel) */
+    .page-header {
+      background: linear-gradient(135deg, rgba(27, 77, 44, 0.04) 0%, rgba(27, 77, 44, 0.01) 100%);
+      border: 1px solid var(--border-color);
+      color: var(--text-dark); border-radius: 20px; padding: 32px;
+      margin-bottom: 30px; box-shadow: var(--card-shadow);
+    }
+    .page-header h1 { font-size: 1.85rem; font-weight: 700; margin: 0; color: var(--primary-green); }
+    .page-header p  { margin: 8px 0 0; color: var(--text-muted); font-size: 0.98rem; }
+
+    /* CARDS */
+    .card {
+      background: var(--surface-white) !important;
+      border: 1px solid var(--border-color) !important; 
+      border-radius: 20px !important;
+      box-shadow: var(--card-shadow); 
+      color: var(--text-dark);
+      margin-bottom: 24px;
+      transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    }
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--hover-shadow);
+      border-color: rgba(27, 77, 44, 0.18) !important;
+    }
+    .card-header {
+      background: rgba(27, 77, 44, 0.015) !important;
+      border-bottom: 1px solid var(--border-color) !important;
+      border-radius: 20px 20px 0 0 !important;
+      font-weight: 700; font-size: 1rem; padding: 18px 24px;
+      color: var(--primary-green);
+    }
+    
+    /* INPUTS & SELECTS */
+    .form-control, .form-select {
+      background-color: var(--surface-white) !important;
+      border: 1px solid rgba(27, 77, 44, 0.12) !important;
+      color: var(--text-dark) !important;
+      border-radius: 12px;
+      padding: 10px 16px;
+    }
+    .form-control:focus, .form-select:focus {
+      border-color: var(--primary-green) !important;
+      box-shadow: 0 0 10px rgba(27, 77, 44, 0.15);
+    }
+    .form-control::placeholder {
+      color: #99a59d;
+    }
+
+    /* BUTTONS */
+    .btn-success, .btn-primary, button[onclick*="submit"] {
+      background: linear-gradient(135deg, var(--primary-green) 0%, #12331d 100%) !important;
+      color: #ffffff !important;
+      font-weight: 700 !important;
+      border: none !important;
+      border-radius: 12px !important;
+      padding: 10px 20px !important;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 4px 12px rgba(27, 77, 44, 0.15);
+    }
+    .btn-success:hover, button[onclick*="submit"]:hover, .btn-primary:hover {
+      transform: translateY(-1.5px);
+      box-shadow: 0 6px 20px rgba(27, 77, 44, 0.25);
+      opacity: 0.95;
+    }
+    .btn-outline-secondary {
+      border-color: rgba(27, 77, 44, 0.15) !important;
+      color: var(--text-muted) !important;
+      border-radius: 10px;
+    }
+    .btn-outline-secondary:hover, .btn-outline-secondary.active {
+      background-color: rgba(27, 77, 44, 0.05) !important;
+      color: var(--primary-green) !important;
+      border-color: rgba(27, 77, 44, 0.3) !important;
+    }
+
+    /* TABLES (Clean Light Aesthetic) */
+    .table {
+      background: var(--surface-white) !important;
+      color: var(--text-dark) !important;
+      border-collapse: separate;
+      border-spacing: 0;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .table th {
+      background-color: rgba(27, 77, 44, 0.03) !important;
+      color: var(--primary-green) !important;
+      font-weight: 700 !important;
+      border: none !important;
+      padding: 14px 18px !important;
+      font-size: 0.9rem;
+      border-bottom: 2px solid rgba(27, 77, 44, 0.08) !important;
+    }
+    .table td {
+      padding: 14px 18px !important;
+      border-bottom: 1px solid rgba(27, 77, 44, 0.05) !important;
+      color: var(--text-dark) !important;
+      font-size: 0.92rem;
+    }
+    .table-hover tbody tr:hover {
+      background-color: rgba(27, 77, 44, 0.015) !important;
+    }
+
+    /* CENTRALIZED CROP CLASS BADGES */
+    .badge-cereal {
+      background: rgba(229, 169, 59, 0.12) !important;
+      color: #b07812 !important;
+      border: 1px solid rgba(229, 169, 59, 0.25) !important;
+      font-weight: 600;
+      padding: 5px 12px;
+      border-radius: 20px;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .badge-potato {
+      background: rgba(140, 98, 57, 0.12) !important;
+      color: #704720 !important;
+      border: 1px solid rgba(140, 98, 57, 0.25) !important;
+      font-weight: 600;
+      padding: 5px 12px;
+      border-radius: 20px;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .badge-undefined {
+      background: rgba(120, 144, 156, 0.12) !important;
+      color: #455a64 !important;
+      border: 1px solid rgba(120, 144, 156, 0.25) !important;
+      font-weight: 600;
+      padding: 5px 12px;
+      border-radius: 20px;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    /* TOASTS */
+    #toast-container { position: fixed; bottom: 24px; right: 24px; z-index: 9999; }
+    .toast-msg {
+      background: var(--surface-white); color: var(--text-dark); border-radius: 14px;
+      padding: 14px 22px; margin-top: 8px; font-size: 0.92rem;
+      border: 1px solid rgba(27, 77, 44, 0.12);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+      animation: slideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    @keyframes slideIn { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+
+    /* 📱 RESPONSIVE MEDIA QUERIES FOR SMARTPHONES */
+    @media (max-width: 991.98px) {
+      .mobile-header {
+        display: flex;
+      }
+
+      .sidebar {
+        transform: translateX(-100%);
+        position: fixed;
+        top: 57px;
+        height: calc(100vh - 57px);
+        width: 270px;
+        box-shadow: 10px 0 30px rgba(0,0,0,0.15);
+      }
+
+      .sidebar.active {
+        transform: translateX(0);
+      }
+
+      .main-content {
+        margin-left: 0 !important;
+        padding: 90px 16px 30px 16px;
+      }
+
+      .btn, button, .sidebar nav a {
+        white-space: nowrap !important;
+      }
+    }
+  </style>
+  {% block head %}{% endblock %}
+</head>
+<body>
+
+<div class="mobile-header">
+  <a href="#" class="mobile-brand d-flex align-items-center gap-2" style="text-decoration: none;">
+    <img src="{{ url_for('static', filename='images/agrinex_logo_v6_c.png') }}" alt="AgriNex Logo" style="height: 32px; width: auto;">
+    <span class="fw-bold text-white" style="font-size: 1.25rem; letter-spacing: 0.5px;">AgriNex</span>
+  </a>
+  <button class="menu-toggle" id="menuToggleBtn">
+    <i class="fas fa-bars"></i>
+  </button>
+</div>
+
+<div class="sidebar" id="appSidebar">
+  <div class="sidebar-brand d-none d-lg-flex flex-column align-items-center text-center gap-2" style="padding: 30px 20px 20px 20px; border-bottom: 1px solid rgba(255,255,255,0.06); margin-bottom: 15px; width: 100%;">
+    <img src="{{ url_for('static', filename='images/agrinex_logo_v6_c.png') }}" alt="AgriNex Logo" style="height: 50px; width: auto;">
+    <h3 class="fw-bold text-white m-0" style="font-size: 1.45rem; letter-spacing: 0.5px;">AgriNex</h3>
+    <span style="font-size: 0.72rem; color: rgba(255,255,255,0.65); white-space: normal; line-height: 1.4; font-weight: 500;">GeoAI Agricultural Platform</span>
+  </div>
+  
+  <nav>
+    <a href="/" class="{{ 'active' if request.path=='/' }}"><i class="fas fa-brain"></i> Crop Diagnostics</a>
+    <a href="/results" class="{{ 'active' if request.path=='/results' }}"><i class="fas fa-clock-rotate-left"></i> Diagnostic History</a>
+    <a href="/map" class="{{ 'active' if request.path=='/map' }}"><i class="fas fa-map-location-dot"></i> Telemetry Map</a>
+    <a href="/statistics" class="{{ 'active' if request.path=='/statistics' }}"><i class="fas fa-chart-line"></i> Analytics Dashboard</a>
+    <a href="/sampling" class="{{ 'active' if request.path=='/sampling' }}"><i class="fas fa-database"></i> Field Surveys</a>
+    
+    <a href="/logout" style="color: #ea4335 !important; margin-top: 30px; border-top: 1px solid rgba(255,255,255,0.05); border-radius: 0; padding-top: 20px !important;">
+      <i class="fas fa-sign-out-alt"></i> Logout
+    </a>
+  </nav>
+  
+  <div class="sidebar-footer">AgriNex · MobileNetV2 · PostGIS</div>
+</div>
+
+<div class="main-content">
+  {% block content %}{% endblock %}
+</div>
+
+<div id="toast-container"></div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+function showToast(msg, type='success') {
+  const c = document.getElementById('toast-container');
+  const d = document.createElement('div');
+  d.className = 'toast-msg';
+  d.style.borderLeft = `4px solid ${type==='success'?'#79d279':'#ea4335'}`;
+  d.innerHTML = `<i class="fas fa-${type==='success'?'check-circle':'exclamation-circle'}" style="color: ${type==='success'?'#79d279':'#ea4335'}"></i> ${msg}`;
+  c.appendChild(d);
+  setTimeout(() => d.remove(), 4000);
+}
+
+// 🟢 جافاسكريبت ذكي لإظهار وإخفاء القائمة عند النقر على الموبايل
+document.getElementById('menuToggleBtn').addEventListener('click', function() {
+  const sidebar = document.getElementById('appSidebar');
+  const icon = this.querySelector('i');
+  
+  sidebar.classList.toggle('active');
+  
+  // تغيير أيقونة القائمة إلى (X) عند الفتح والعودة عند الإغلاق
+  if(sidebar.classList.contains('active')) {
+    icon.className = 'fas fa-times';
+  } else {
+    icon.className = 'fas fa-bars';
+  }
+});
+
+// إغلاق القائمة تلقائياً إذا قمنا بالنقر خارجها في الموبايل لسهولة الاستخدام
+document.addEventListener('click', function(event) {
+  const sidebar = document.getElementById('appSidebar');
+  const toggleBtn = document.getElementById('menuToggleBtn');
+  
+  if (window.innerWidth < 992 && 
+      !sidebar.contains(event.target) && 
+      !toggleBtn.contains(event.target) && 
+      sidebar.classList.contains('active')) {
+    sidebar.classList.remove('active');
+    toggleBtn.querySelector('i').className = 'fas fa-bars';
+  }
+});
+
+// 📱 Register Service Worker for PWA (Offline-First support)
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js')
+      .then(reg => console.log('PWA Service Worker registered successfully: ', reg.scope))
+      .catch(err => console.error('PWA Service Worker registration failed: ', err));
+  });
+}
+</script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,54 @@
+# IDE and system files
+.idea/
+.gradle/
+*.iml
+.DS_Store
+captures/
+.externalNativeBuild
+.cxx
+local.properties
+.kotlin/
+
+# Android Build outputs (recursive)
+**/build/
+build/
+app/build/
+
+# Python Virtual Environments (recursive)
+**/venv/
+venv/
+ENV/
+.env/
+__pycache__/
+*.pyc
+
+# Ephemeral uploads
+**/static/uploads/*
+!**/static/uploads/.gitkeep
+# Python cache
+*.pyo
+*.pyd
+
+# Large temporary/model training files
+datasets/
+dataset/
+data/
+*.zip
+*.rar
+
+# Node / web cache if exists
+node_modules/
+
+# Tensorflow / ML cache
+*.h5.tmp
+*.ckpt
+*.log
+
+# Android generated
+**/release/
+**/debug/
+*.apk
+*.aab
+
+# VS Code
+.vscode/

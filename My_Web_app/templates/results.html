@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+{% block title %}History - AgriNex{% endblock %}
+
+{% block content %}
+<div class="page-header mb-4 animate__animated animate__fadeIn">
+  <h1><i class="fas fa-clock-rotate-left me-2" style="color: var(--primary-green);"></i>Diagnostic History</h1>
+  <p class="text-muted">All classifications and diagnostic logs saved within the AgriNex database</p>
+</div>
+
+<div class="card">
+  <div class="card-header d-flex align-items-center justify-content-between py-3">
+    <span><i class="fas fa-table me-2" style="color: var(--primary-green);"></i><strong>{{ predictions|length }}</strong> entries found</span>
+    <div class="d-flex gap-2">
+      <input type="text" id="search" class="form-control form-control-sm" placeholder="Search..." oninput="filterTable()" style="width:200px;">
+    </div>
+  </div>
+  
+  <div class="card-body p-0">
+    <div class="table-responsive">
+      <table class="table table-hover mb-0 align-middle" id="results-table">
+        <thead>
+          <tr>
+            <th># ID</th>
+            <th>Preview</th>
+            <th>Class</th>
+            <th>Confidence</th>
+            <th>Latitude</th>
+            <th>Longitude</th>
+            <th>Timestamp</th>
+            <th>Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for p in predictions %}
+          <tr>
+            <td><strong class="text-muted">{{ p.id }}</strong></td>
+            <td>
+              {% if p.image_path %}
+              <img src="/static/uploads/{{ p.image_path }}" alt="Crop Preview"
+                style="width:48px;height:48px;object-fit:cover;border-radius:8px;border: 1px solid var(--border-color);cursor:pointer"
+                onclick="showModal('/static/uploads/{{ p.image_path }}','{{ p.predicted_class }}','{{ p.confidence }}')">
+              {% else %}
+              <div style="width:48px;height:48px;background:var(--bg-cream);border-radius:8px;display:flex;align-items:center;justify-content:center;">
+                <i class="fas fa-image text-muted"></i>
+              </div>
+              {% endif %}
+            </td>
+            <td>
+              {% if p.predicted_class|lower == 'cereal' %}
+                <span class="badge-cereal">🌾 cereal</span>
+              {% elif p.predicted_class|lower == 'potato' %}
+                <span class="badge-potato">🥔 potato</span>
+              {% else %}
+                <span class="badge-undefined">❓ undefined</span>
+              {% endif %}
+            </td>
+            <td>
+              {% set progress_color = '#78909c' %}
+              {% if p.predicted_class|lower == 'cereal' %}
+                {% set progress_color = '#e5a93b' %}
+              {% elif p.predicted_class|lower == 'potato' %}
+                {% set progress_color = '#8c6239' %}
+              {% endif %}
+              <div class="d-flex align-items-center gap-2">
+                <div style="width:60px;height:6px;background:rgba(27, 77, 44, 0.08);border-radius:3px;overflow:hidden;">
+                  <div style="width:{{ p.confidence }}%;height:6px;background: {{ progress_color }};border-radius:3px;"></div>
+                </div>
+                <small class="fw-bold" style="color: {{ progress_color }}">{{ p.confidence }}%</small>
+              </div>
+            </td>
+            <td><small>{{ p.latitude or '—' }}</small></td>
+            <td><small>{{ p.longitude or '—' }}</small></td>
+            <td><small class="text-muted">{{ p.timestamp }}</small></td>
+            <td><small class="text-muted">{{ p.notes or '—' }}</small></td>
+          </tr>
+          {% else %}
+          <tr>
+            <td colspan="8" class="text-center text-muted py-5">
+              <i class="fas fa-inbox fa-3x mb-3 d-block opacity-25"></i>No logged predictions found
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="imgModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 rounded-4 overflow-hidden" style="background: var(--surface-white); border: 1px solid var(--border-color) !important; box-shadow: var(--hover-shadow);">
+      <div class="modal-header border-0 py-3">
+        <h6 class="modal-title fw-bold text-dark" id="modal-title"></h6>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body p-0 text-center bg-light">
+        <img id="modal-img" src="" class="img-fluid" alt="Crop View" style="max-height: 70vh;">
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function filterTable() {
+  const search = document.getElementById('search').value.toLowerCase();
+  document.querySelectorAll('#results-table tbody tr').forEach(row => {
+    if (row.cells.length === 1) return;
+    const text = row.textContent.toLowerCase();
+    row.style.display = text.includes(search) ? '' : 'none';
+  });
+}
+
+function showModal(src, cls, conf) {
+  document.getElementById('modal-img').src = src;
+  document.getElementById('modal-title').innerHTML = `<i class="fas fa-robot me-2" style="color: var(--primary-green);"></i> ${cls.toUpperCase()} — <span style="color: var(--primary-green); font-weight: 700;">${conf}%</span>`;
+  new bootstrap.Modal(document.getElementById('imgModal')).show();
+}
+</script>
+{% endblock %}

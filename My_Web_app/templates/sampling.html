@@ -1,0 +1,893 @@
+{% extends "base.html" %}
+
+{% block title %}Field Surveys - AgriNex{% endblock %}
+
+{% block head %}
+<style>
+  #sampling-map { 
+    height: 520px; 
+    min-height: 400px; 
+    border-radius: 14px; 
+    width: 100%; 
+    background-color: var(--bg-cream) !important; 
+  }
+  
+  .legend-box, .details-box, .import-box {
+    background: var(--surface-white) !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 14px;
+    padding: 18px;
+    box-shadow: var(--card-shadow);
+    margin-bottom: 20px;
+    color: var(--text-dark);
+  }
+  
+  .legend-item { 
+    display: flex; 
+    align-items: center; 
+    gap: 8px; 
+    margin-bottom: 6px; 
+    font-size: 0.85rem; 
+    color: var(--text-dark); 
+  }
+  
+  .legend-dot { 
+    width: 12px; 
+    height: 12px; 
+    border-radius: 50%; 
+    flex-shrink: 0; 
+  }
+  
+  .table-responsive {
+    max-height: 380px;
+    overflow-y: auto;
+  }
+
+  .nav-tabs {
+    border-bottom: 1px solid var(--border-color) !important;
+  }
+
+  .nav-link {
+    color: var(--text-muted) !important;
+    border: none !important;
+    border-radius: 8px 8px 0 0 !important;
+    font-weight: 500;
+    padding: 10px 16px;
+    transition: all 0.2s ease;
+  }
+
+  .nav-link:hover {
+    color: var(--primary-green) !important;
+    background-color: rgba(27, 77, 44, 0.04) !important;
+  }
+
+  .nav-link.active {
+    background-color: rgba(27, 77, 44, 0.06) !important;
+    color: var(--primary-green) !important;
+    border-bottom: 2px solid var(--primary-green) !important;
+  }
+
+  .xs-small {
+    font-size: 0.78rem;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-header mb-4 animate__animated animate__fadeIn">
+  <h1><i class="fas fa-database me-2" style="color: var(--primary-green);"></i>AgriNex — Field Surveys & Sync</h1>
+  <p class="text-muted">Analyze agricultural telemetry nodes, sync QGIS/Mergin Map layers, and visualize spatial crop density</p>
+</div>
+
+<!-- ─────────────── 🟩 SECTION 1: KPI INFO CARDS ─────────────── -->
+<div class="row g-3 mb-4 animate__animated animate__fadeIn">
+  <!-- Card 1: Total Nodes -->
+  <div class="col-md-6 col-lg-3">
+    <div class="card p-3">
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
+          <h6 class="text-muted small text-uppercase mb-1" style="font-size:0.8rem; font-weight:600;">Total Telemetry Nodes</h6>
+          <h2 class="fw-bold mb-0 text-dark" id="kpi-total">0</h2>
+        </div>
+        <div class="fs-1" style="color: var(--primary-green); opacity: 0.85;"><i class="fas fa-database"></i></div>
+      </div>
+      <div class="mt-2 small text-muted">Combined database points</div>
+    </div>
+  </div>
+  
+  <!-- Card 2: Training Points -->
+  <div class="col-md-6 col-lg-3">
+    <div class="card p-3">
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
+          <h6 class="text-muted small text-uppercase mb-1" style="font-size:0.8rem; font-weight:600;">Training Surveys</h6>
+          <h2 class="fw-bold mb-0 text-dark" id="kpi-training">0</h2>
+        </div>
+        <div class="fs-1" style="color: var(--primary-green); opacity: 0.85;"><i class="fas fa-map-pin"></i></div>
+      </div>
+      <div class="mt-2 small text-muted">Synced from QGIS/Mergin Maps</div>
+    </div>
+  </div>
+
+  <!-- Card 3: User Collections -->
+  <div class="col-md-6 col-lg-3">
+    <div class="card p-3">
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
+          <h6 class="text-muted small text-uppercase mb-1" style="font-size:0.8rem; font-weight:600;">Field Inferences</h6>
+          <h2 class="fw-bold mb-0 text-dark" id="kpi-collections">0</h2>
+        </div>
+        <div class="fs-1" style="color: var(--primary-green); opacity: 0.85;"><i class="fas fa-brain"></i></div>
+      </div>
+      <div class="mt-2 small text-muted">AI predictions log records</div>
+    </div>
+  </div>
+
+  <!-- Card 4: Crop Share -->
+  <div class="col-md-6 col-lg-3">
+    <div class="card p-3">
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
+          <h6 class="text-muted small text-uppercase mb-1" style="font-size:0.8rem; font-weight:600;">Crop Diversity</h6>
+          <h5 class="fw-bold mb-0 mt-1" id="kpi-ratio" style="color: var(--primary-green);">🌾 --% | 🥔 --%</h5>
+        </div>
+        <div class="fs-1" style="color: var(--primary-green); opacity: 0.85;"><i class="fas fa-leaf"></i></div>
+      </div>
+      <div class="mt-2 small text-muted">Cereal vs Potato shares</div>
+    </div>
+  </div>
+</div>
+
+<!-- ─────────────── 🗺️ SECTION 2: MAP & INTERACTIVE CONTROLS ─────────────── -->
+<div class="row g-4 mb-4">
+  <div class="col-lg-8 col-xl-9 animate__animated animate__fadeInLeft">
+    <div class="row mb-3 align-items-center">
+      <div class="col-md-7">
+        <div class="btn-group me-3">
+          <button class="btn btn-outline-success btn-sm active" id="btn-toggle-field" onclick="toggleMapLayer('field')">
+            <i class="fas fa-brain me-1"></i>AI Predictions
+          </button>
+          <button class="btn btn-outline-success btn-sm active" id="btn-toggle-train" onclick="toggleMapLayer('train')">
+            <i class="fas fa-database me-1"></i>Field Surveys
+          </button>
+        </div>
+        
+        <div class="btn-group mt-2 mt-md-0">
+          <button class="btn btn-outline-secondary btn-sm" id="tile-osm" onclick="setMapTile('osm')">OSM</button>
+          <button class="btn btn-outline-secondary btn-sm active" id="tile-satellite" onclick="setMapTile('satellite')">Satellite</button>
+          <button class="btn btn-outline-secondary btn-sm" id="tile-topo" onclick="setMapTile('topo')">Topography</button>
+        </div>
+      </div>
+      <div class="col-md-5 text-md-end mt-2 mt-md-0">
+        <span class="badge border text-dark p-2" style="background: var(--bg-cream); border-color: var(--border-color) !important;"><i class="fas fa-satellite me-1"></i>Algeria Geographic Mask Enabled</span>
+      </div>
+    </div>
+    
+    <div class="card p-0 overflow-hidden border-0 shadow-sm mb-4">
+      <div id="sampling-map"></div>
+    </div>
+  </div>
+
+  <div class="col-lg-4 col-xl-3 animate__animated animate__fadeInRight">
+    <!-- Selected Node Details Panel -->
+    <div class="details-box">
+      <h6 class="fw-bold mb-3 text-dark"><i class="fas fa-info-circle me-2" style="color: var(--primary-green);"></i>Telemetry Details</h6>
+      <div id="details-card-body">
+        <p class="text-muted small text-center my-4">Select any marker on the map or table to view detailed intelligence</p>
+      </div>
+    </div>
+
+    <!-- GeoJSON Import Panel -->
+    <div class="import-box">
+      <h6 class="fw-bold mb-2 text-dark"><i class="fas fa-sync-alt me-2" style="color: var(--primary-green);"></i>QGIS / Mergin Map Sync</h6>
+      <p class="text-muted small mb-3">Sync training datasets directly into the local PostgreSQL spatial tables.</p>
+      
+      <div id="import-drop-zone" onclick="document.getElementById('geoJsonInput').click()"
+        style="border: 2px dashed var(--primary-green); border-radius: 14px; padding: 25px 15px; text-align: center; cursor: pointer;
+               background: rgba(27, 77, 44, 0.02); transition: all 0.3s ease;">
+        <i class="fas fa-file-import fa-2x mb-2" style="color: var(--primary-green);"></i>
+        <p class="mb-1 fw-semibold text-dark small">Drag & drop GeoJSON or click to browse</p>
+        <p class="text-muted xs-small mb-0">Upload QGIS exported points layer</p>
+      </div>
+      <input type="file" id="geoJsonInput" accept=".geojson,.json" class="d-none">
+
+      <div id="import-preview" class="mt-3 d-none p-2 rounded bg-light border border-light-subtle">
+        <div class="xs-small text-muted"><i class="fas fa-check-circle me-1" style="color: var(--primary-green);"></i>Parsed Successfully:</div>
+        <div class="fw-bold small mt-1" style="color: var(--primary-green);"><span id="import-count">0</span> point features found</div>
+        <div class="xs-small text-muted mt-1" id="import-classes"></div>
+        <button class="btn btn-sm btn-success w-100 mt-3" id="sync-btn" onclick="syncImportedData()">
+          <i class="fas fa-cloud-upload-alt me-1"></i> Sync with Database
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─────────────── 📋 SECTION 3: TABBED INTERACTIVE TABLES ─────────────── -->
+<div class="row animate__animated animate__fadeInUp">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header py-3">
+        <div class="row g-3 align-items-center">
+          <div class="col-md-4 d-flex align-items-center">
+            <h5 class="m-0 fw-bold"><i class="fas fa-database me-2" style="color: var(--primary-green);"></i>Telemetry Records</h5>
+          </div>
+          <div class="col-md-8">
+            <div class="d-flex flex-wrap gap-2 justify-content-md-end">
+              <input type="text" id="table-search" class="form-control form-control-sm" placeholder="Search telemetry..." oninput="populateTables()" style="width:180px;">
+              <select id="class-filter" class="form-select form-select-sm" onchange="populateTables()" style="width:130px;">
+                <option value="all">All Crops</option>
+                <option value="cereal">🌾 Cereal</option>
+                <option value="potato">🥔 Potato</option>
+                <option value="undefined">❓ Undefined</option>
+              </select>
+              <div class="btn-group">
+                <button class="btn btn-outline-success btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  <i class="fas fa-download me-1"></i>Export Active
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end">
+                  <li><a class="dropdown-item" href="#" onclick="exportData('csv')"><i class="fas fa-file-csv me-2 text-success"></i>Download as CSV</a></li>
+                  <li><a class="dropdown-item" href="#" onclick="exportData('geojson')"><i class="fas fa-globe-africa me-2 text-info"></i>Download as GeoJSON</a></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="card-body p-0">
+        <!-- Tab Headers -->
+        <ul class="nav nav-tabs px-3 pt-2 bg-transparent" id="samplingTabs" role="tablist">
+          <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="field-tab" data-bs-toggle="tab" data-bs-target="#field-content" type="button" role="tab" aria-controls="field-content" aria-selected="true">
+              <i class="fas fa-mobile-screen me-2" style="color: var(--primary-green);"></i>Field Collections (<span id="count-field-tab">0</span>)
+            </button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="train-tab" data-bs-toggle="tab" data-bs-target="#train-content" type="button" role="tab" aria-controls="train-content" aria-selected="false">
+              <i class="fas fa-map-marked-alt me-2" style="color: var(--primary-green);"></i>Training Surveys (<span id="count-train-tab">0</span>)
+            </button>
+          </li>
+        </ul>
+        
+        <!-- Tab Contents -->
+        <div class="tab-content" id="samplingTabsContent">
+          <!-- Field Collections Tab -->
+          <div class="tab-pane fade show active p-0" id="field-content" role="tabpanel" aria-labelledby="field-tab">
+            <div class="table-responsive">
+              <table class="table table-hover mb-0 align-middle">
+                <thead>
+                  <tr>
+                    <th># ID</th>
+                    <th>Visual Frame</th>
+                    <th>Classification</th>
+                    <th>Accuracy</th>
+                    <th>Latitude</th>
+                    <th>Longitude</th>
+                    <th>Timestamp</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="field-table-body">
+                  <tr>
+                    <td colspan="8" class="text-center text-muted py-4"><i class="fas fa-spinner fa-spin me-2"></i>Loading collections data...</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Training Surveys Tab -->
+          <div class="tab-pane fade p-0" id="train-content" role="tabpanel" aria-labelledby="train-tab">
+            <div class="table-responsive">
+              <table class="table table-hover mb-0 align-middle">
+                <thead>
+                  <tr>
+                    <th># ID</th>
+                    <th>Visual Frame</th>
+                    <th>Ground Truth Label</th>
+                    <th>Latitude</th>
+                    <th>Longitude</th>
+                    <th>Acquisition Date</th>
+                    <th>Data Source</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="train-table-body">
+                  <tr>
+                    <td colspan="8" class="text-center text-muted py-4"><i class="fas fa-spinner fa-spin me-2"></i>Loading survey data...</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Image Modal for popups -->
+<div class="modal fade" id="imageModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 rounded-4 overflow-hidden" style="background: var(--surface-white); border: 1px solid var(--border-color) !important; box-shadow: var(--hover-shadow);">
+      <div class="modal-header border-0 py-3">
+        <h6 class="modal-title fw-bold text-dark" id="modal-image-title"></h6>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body p-0 text-center bg-light">
+        <img id="modal-image-img" src="" class="img-fluid" alt="Crop View" style="max-height: 70vh;">
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Global data stores
+    window.trainingData = [];
+    window.newData = [];
+    window.pendingGeoJson = null;
+
+    // Leaflet configuration
+    const CLASS_COLORS = { 'cereal': '#e5a93b', 'potato': '#8c6239', 'undefined': '#78909c' };
+    const algeriaBounds = L.latLngBounds(L.latLng(18.0, -9.0), L.latLng(38.0, 12.0));
+
+    const map = L.map('sampling-map', {
+        center: [28.0339, 1.6596], 
+        zoom: 5.5,                   
+        minZoom: 5,              
+        maxBounds: algeriaBounds,  
+        maxBoundsViscosity: 1.0,
+        zoomControl: true
+    });
+
+    map.createPane('maskPane');
+    map.getPane('maskPane').style.zIndex = 500; 
+    map.getPane('maskPane').style.pointerEvents = 'none';
+
+    map.createPane('markerPaneCustom');
+    map.getPane('markerPaneCustom').style.zIndex = 600;
+
+    const tileUrls = {
+        osm: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+        satellite: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+        topo: 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png'
+    };
+
+    let currentTileLayer = null;
+
+    function setMapTile(name) {
+        if (currentTileLayer) { map.removeLayer(currentTileLayer); }
+        
+        ['osm', 'satellite', 'topo'].forEach(t => document.getElementById('tile-'+t).classList.remove('active'));
+        document.getElementById('tile-'+name).classList.add('active');
+
+        currentTileLayer = L.tileLayer(tileUrls[name], { attribution: 'AgriNex' });
+        currentTileLayer.addTo(map);
+    }
+
+    setMapTile('satellite');
+
+    // Load Algeria bounds mask
+    fetch("{{ url_for('static', filename='data/algeria.geojson') }}")
+      .then(response => response.json())
+      .then(geojsonData => {
+          const worldOuterCoords = [
+              [90, -180], [90, 180], [-90, 180], [-90, -180], [90, -180]
+          ];
+          let maskRings = [worldOuterCoords];
+
+          geojsonData.features.forEach(function(feature) {
+              let geom = feature.geometry;
+              if (!geom) return;
+              
+              if (geom.type === "Polygon") {
+                  geom.coordinates.forEach(ring => maskRings.push(ring.map(c => [c[1], c[0]])));
+              } else if (geom.type === "MultiPolygon") {
+                  geom.coordinates.forEach(p => p.forEach(ring => maskRings.push(ring.map(c => [c[1], c[0]]))));
+              }
+          });
+
+          L.polygon(maskRings, {
+              color: '#f6f5f0',        
+              weight: 1.5,
+              fillColor: '#f6f5f0',    
+              fillOpacity: 1.0,        
+              pane: 'maskPane',        
+              interactive: false       
+          }).addTo(map);
+
+          L.geoJSON(geojsonData, {
+              style: { color: '#1b4d2c', weight: 1.8, fillColor: 'transparent', interactive: false }
+          }).addTo(map);
+      })
+      .catch(error => console.error("Algeria GeoJSON boundary load failed:", error));
+
+    const predGroup  = L.layerGroup().addTo(map);
+    const trainGroup = L.layerGroup().addTo(map);
+
+    // Toggle Map Layers
+    function toggleMapLayer(layer) {
+        if (layer === 'field') {
+            if (map.hasLayer(predGroup)) { 
+                map.removeLayer(predGroup); 
+                document.getElementById('btn-toggle-field').classList.remove('active'); 
+            } else { 
+                map.addLayer(predGroup); 
+                document.getElementById('btn-toggle-field').classList.add('active'); 
+            }
+        } else {
+            if (map.hasLayer(trainGroup)) { 
+                map.removeLayer(trainGroup); 
+                document.getElementById('btn-toggle-train').classList.remove('active'); 
+            } else { 
+                map.addLayer(trainGroup); 
+                document.getElementById('btn-toggle-train').classList.add('active'); 
+            }
+        }
+    }
+
+    // Load Data from Flask Backend API
+    function loadSamplingData() {
+        fetch('/api/sampling-data')
+        .then(response => response.json())
+        .then(data => {
+            console.log("Sampling data loaded:", data);
+            window.trainingData = data.training_data || [];
+            window.newData = data.new_data || [];
+            
+            updateKPIs();
+            buildMapMarkers();
+            populateTables();
+        })
+        .catch(err => {
+            console.error("Failed to load sampling data:", err);
+            showToast("Failed to sync telemetry from database.", "error");
+        });
+    }
+
+    // Build and display Leaflet Map markers
+    function buildMapMarkers() {
+        predGroup.clearLayers();
+        trainGroup.clearLayers();
+
+        // 1. Field Collections Markers
+        window.newData.forEach(p => {
+            if (!p.latitude || !p.longitude) return;
+            const color = CLASS_COLORS[p.predicted_class.toLowerCase()] || '#78909c';
+            
+            // Outlined circles for predictions
+            const m = L.circleMarker([p.latitude, p.longitude], {
+                radius: 7,
+                fillColor: color,
+                color: color,
+                weight: 3,
+                fillOpacity: 0.18,
+                pane: 'markerPaneCustom'
+            })
+            .bindPopup(`<div style="min-width:160px;">
+                <b style="color:${color}">${p.predicted_class.toUpperCase()}</b><br>
+                <small class="text-muted">Accuracy: ${p.confidence}%</small><br>
+                <small class="text-muted">Type: AI Prediction</small><br>
+                <span class="text-muted">📅 ${p.timestamp}</span>
+            </div>`)
+            .on('click', () => selectNode(p, 'field'));
+            predGroup.addLayer(m);
+        });
+
+        // 2. Training Survey Markers
+        window.trainingData.forEach(t => {
+            if (!t.latitude || !t.longitude) return;
+            const color = CLASS_COLORS[(t.class_label || 'undefined').toLowerCase()] || '#78909c';
+            
+            // Solid filled circles for surveys
+            const m = L.circleMarker([t.latitude, t.longitude], {
+                radius: 6,
+                fillColor: color,
+                color: '#ffffff',
+                weight: 1.5,
+                fillOpacity: 0.9,
+                pane: 'markerPaneCustom'
+            })
+            .bindPopup(`<div style="min-width:160px;">
+                <b style="color:${color}">${(t.class_label || 'Undefined').toUpperCase()}</b><br>
+                <small class="text-muted">Type: Field Survey</small><br>
+                <small class="text-muted">Source: ${t.source || 'QGIS'}</small><br>
+                <span class="text-muted">📅 ${t.acquisition_date || '—'}</span>
+            </div>`)
+            .on('click', () => selectNode(t, 'train'));
+            trainGroup.addLayer(m);
+        });
+    }
+
+    // Populate tabbed details tables
+    function populateTables() {
+        const searchQuery = document.getElementById('table-search').value.toLowerCase();
+        const classFilter = document.getElementById('class-filter').value.toLowerCase();
+        
+        // Update tab count labels
+        document.getElementById('count-field-tab').innerText = window.newData.length;
+        document.getElementById('count-train-tab').innerText = window.trainingData.length;
+
+        // 1. Field Collections Table
+        const fieldTableBody = document.getElementById('field-table-body');
+        fieldTableBody.innerHTML = '';
+        
+        const filteredNewData = window.newData.filter(p => {
+            const matchesSearch = (p.id.toString().includes(searchQuery) ||
+                                   (p.notes && p.notes.toLowerCase().includes(searchQuery)) ||
+                                   p.predicted_class.toLowerCase().includes(searchQuery));
+            const matchesClass = (classFilter === 'all' || p.predicted_class.toLowerCase() === classFilter);
+            return matchesSearch && matchesClass;
+        });
+        
+        if (filteredNewData.length === 0) {
+            fieldTableBody.innerHTML = `<tr><td colspan="8" class="text-center text-muted py-4"><i class="fas fa-inbox me-2"></i>No records match the filters</td></tr>`;
+        } else {
+            filteredNewData.forEach(p => {
+                const imgHtml = p.image_path ? 
+                    `<img src="/static/uploads/${p.image_path}" style="width:36px;height:36px;object-fit:cover;border-radius:6px;cursor:pointer;border:1px solid var(--border-color);" onclick="showImageModal('/static/uploads/${p.image_path}', '${p.predicted_class}', '${p.confidence}')">` : 
+                    `<div style="width:36px;height:36px;background:var(--bg-cream);border-radius:6px;display:flex;align-items:center;justify-content:center;"><i class="fas fa-image text-muted"></i></div>`;
+                
+                let badgeClass = 'badge-undefined';
+                if (p.predicted_class.toLowerCase() === 'cereal') badgeClass = 'badge-cereal';
+                else if (p.predicted_class.toLowerCase() === 'potato') badgeClass = 'badge-potato';
+                
+                fieldTableBody.innerHTML += `
+                    <tr>
+                        <td><strong class="text-muted">#${p.id}</strong></td>
+                        <td>${imgHtml}</td>
+                        <td><span class="${badgeClass}">${p.predicted_class}</span></td>
+                        <td><span class="fw-bold" style="color: var(--primary-green);">${p.confidence}%</span></td>
+                        <td><small>${p.latitude.toFixed(5)}</small></td>
+                        <td><small>${p.longitude.toFixed(5)}</small></td>
+                        <td><small class="text-muted">${p.timestamp}</small></td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-success p-1" onclick="zoomToMarker(${p.latitude}, ${p.longitude}, 'field', ${p.id})" title="Zoom to location">
+                                <i class="fas fa-crosshairs"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+        
+        // 2. Training Surveys Table
+        const trainTableBody = document.getElementById('train-table-body');
+        trainTableBody.innerHTML = '';
+        
+        const filteredTrainData = window.trainingData.filter(t => {
+            const matchesSearch = (t.id.toString().includes(searchQuery) ||
+                                   (t.notes && t.notes.toLowerCase().includes(searchQuery)) ||
+                                   t.class_label.toLowerCase().includes(searchQuery) ||
+                                   (t.source && t.source.toLowerCase().includes(searchQuery)));
+            const matchesClass = (classFilter === 'all' || t.class_label.toLowerCase() === classFilter);
+            return matchesSearch && matchesClass;
+        });
+        
+        if (filteredTrainData.length === 0) {
+            trainTableBody.innerHTML = `<tr><td colspan="8" class="text-center text-muted py-4"><i class="fas fa-inbox me-2"></i>No records match the filters</td></tr>`;
+        } else {
+            filteredTrainData.forEach(t => {
+                let badgeClass = 'badge-undefined';
+                if (t.class_label.toLowerCase() === 'cereal') badgeClass = 'badge-cereal';
+                else if (t.class_label.toLowerCase() === 'potato') badgeClass = 'badge-potato';
+                
+                const imgHtml = t.image_name ? 
+                    `<img src="/static/uploads/${t.image_name}" style="width:36px;height:36px;object-fit:cover;border-radius:6px;cursor:pointer;border:1px solid var(--border-color);" onclick="showImageModal('/static/uploads/${t.image_name}', '${t.class_label}', '100.0')">` : 
+                    `<div style="width:36px;height:36px;background:var(--bg-cream);border-radius:6px;display:flex;align-items:center;justify-content:center;"><i class="fas fa-image text-muted"></i></div>`;
+                
+                const dateStr = t.acquisition_date ? t.acquisition_date : '—';
+                
+                trainTableBody.innerHTML += `
+                    <tr>
+                        <td><strong class="text-muted">#${t.id}</strong></td>
+                        <td>${imgHtml}</td>
+                        <td><span class="${badgeClass}">${t.class_label}</span></td>
+                        <td><small>${t.latitude.toFixed(5)}</small></td>
+                        <td><small>${t.longitude.toFixed(5)}</small></td>
+                        <td><small class="text-muted">${dateStr}</small></td>
+                        <td><small class="text-muted">${t.source || 'QGIS'}</small></td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-success p-1" onclick="zoomToMarker(${t.latitude}, ${t.longitude}, 'train', ${t.id})" title="Zoom to location">
+                                <i class="fas fa-crosshairs"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+    }
+
+    // Zoom on map to a telemetry node
+    function zoomToMarker(lat, lon, type, id) {
+        map.setView([lat, lon], 14);
+        
+        let targetGroup = type === 'field' ? predGroup : trainGroup;
+        targetGroup.eachLayer(marker => {
+            const markerLatLng = marker.getLatLng();
+            if (Math.abs(markerLatLng.lat - lat) < 0.0001 && Math.abs(markerLatLng.lng - lon) < 0.0001) {
+                marker.openPopup();
+                let data = type === 'field' ? window.newData.find(p => p.id === id) : window.trainingData.find(t => t.id === id);
+                selectNode(data, type);
+            }
+        });
+    }
+
+    // Update details side card
+    function selectNode(data, type) {
+        const detailsContainer = document.getElementById('details-card-body');
+        if (!data) {
+            detailsContainer.innerHTML = `<p class="text-muted small text-center my-4">Select any marker on the map or table to view detailed intelligence</p>`;
+            return;
+        }
+        
+        let imgHtml = '';
+        let classLabel = '';
+        let badgeClass = 'bg-secondary';
+        let detailsHtml = '';
+        
+        if (type === 'field') {
+            classLabel = data.predicted_class;
+            if (classLabel.toLowerCase() === 'cereal') badgeClass = 'badge-cereal';
+            else if (classLabel.toLowerCase() === 'potato') badgeClass = 'badge-potato';
+            else badgeClass = 'badge-undefined';
+            
+            imgHtml = data.image_path ? 
+                `<div class="text-center mb-3">
+                    <img src="/static/uploads/${data.image_path}" class="img-fluid rounded" style="max-height: 150px; border: 1px solid var(--border-color); object-fit: cover; width:100%;">
+                 </div>` : '';
+                 
+            detailsHtml = `
+                <div class="small mb-2 d-flex justify-content-between">
+                    <span class="text-muted">Type:</span>
+                    <span class="fw-bold" style="color: var(--primary-green)">Field Collection</span>
+                </div>
+                <div class="small mb-2 d-flex justify-content-between">
+                    <span class="text-muted">Confidence:</span>
+                    <span class="fw-bold" style="color: var(--primary-green)">${data.confidence}%</span>
+                </div>
+                <div class="small mb-2 d-flex justify-content-between">
+                    <span class="text-muted">Timestamp:</span>
+                    <span>${data.timestamp}</span>
+                </div>
+            `;
+        } else {
+            classLabel = data.class_label || 'undefined';
+            if (classLabel.toLowerCase() === 'cereal') badgeClass = 'badge-cereal';
+            else if (classLabel.toLowerCase() === 'potato') badgeClass = 'badge-potato';
+            else badgeClass = 'badge-undefined';
+            
+            imgHtml = data.image_name ? 
+                `<div class="text-center mb-3">
+                    <img src="/static/uploads/${data.image_name}" class="img-fluid rounded" style="max-height: 150px; border: 1px solid var(--border-color); object-fit: cover; width:100%; cursor:pointer;" onclick="showImageModal('/static/uploads/${data.image_name}', '${classLabel}', '100.0')">
+                 </div>` : '';
+            
+            detailsHtml = `
+                <div class="small mb-2 d-flex justify-content-between">
+                    <span class="text-muted">Type:</span>
+                    <span class="fw-bold" style="color: var(--wheat-gold)">Training Survey</span>
+                </div>
+                <div class="small mb-2 d-flex justify-content-between">
+                    <span class="text-muted">Source:</span>
+                    <span>${data.source || 'QGIS / Mergin Map'}</span>
+                </div>
+                <div class="small mb-2 d-flex justify-content-between">
+                    <span class="text-muted">Acquisition Date:</span>
+                    <span>${data.acquisition_date || '—'}</span>
+                </div>
+            `;
+        }
+        
+        detailsContainer.innerHTML = `
+            ${imgHtml}
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h6 class="m-0 text-dark font-monospace">Node ID: #${data.id}</h6>
+                <span class="${badgeClass}">${classLabel.toUpperCase()}</span>
+            </div>
+            <hr style="border-color: var(--border-color); margin-top:5px; margin-bottom:12px;">
+            ${detailsHtml}
+            <div class="small mb-2 d-flex justify-content-between">
+                <span class="text-muted">Latitude:</span>
+                <span>${data.latitude.toFixed(6)}</span>
+            </div>
+            <div class="small mb-3 d-flex justify-content-between">
+                <span class="text-muted">Longitude:</span>
+                <span>${data.longitude.toFixed(6)}</span>
+            </div>
+            <div class="small p-2 bg-light rounded" style="border: 1px solid var(--border-color); margin-top: 10px;">
+                <div class="text-muted xs-small mb-1"><i class="fas fa-comment-alt me-1"></i>Agronomic Notes:</div>
+                <div style="font-style: italic; font-size: 0.8rem; word-break: break-word; color: var(--text-dark);">${data.notes || 'No agronomic annotations logged.'}</div>
+            </div>
+        `;
+    }
+
+    // Update KPI panels dynamically
+    function updateKPIs() {
+        const totalTrain = window.trainingData.length;
+        const totalNew = window.newData.length;
+        const totalCombined = totalTrain + totalNew;
+
+        document.getElementById('kpi-total').innerText = totalCombined;
+        document.getElementById('kpi-training').innerText = totalTrain;
+        document.getElementById('kpi-collections').innerText = totalNew;
+
+        // Calculate Crop Diversity
+        const combinedCrops = [
+            ...window.trainingData.map(t => (t.class_label || 'undefined').toLowerCase()),
+            ...window.newData.map(p => (p.predicted_class || 'undefined').toLowerCase())
+        ];
+        
+        const total = combinedCrops.length;
+        if (total > 0) {
+            const cerealCount = combinedCrops.filter(c => c === 'cereal').length;
+            const potatoCount = combinedCrops.filter(c => c === 'potato').length;
+            const cerealPct = Math.round((cerealCount / total) * 100);
+            const potatoPct = Math.round((potatoCount / total) * 100);
+            
+            document.getElementById('kpi-ratio').innerHTML = `🌾 ${cerealPct}% | 🥔 ${potatoPct}%`;
+        } else {
+            document.getElementById('kpi-ratio').innerHTML = `🌾 0% | 🥔 0%`;
+        }
+    }
+
+    // Parser for imported GeoJSON layers
+    function handleGeoJsonFile(file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                const geojson = JSON.parse(e.target.result);
+                if (!geojson.features || !Array.isArray(geojson.features)) {
+                    showToast("Sync Error: File structure must contain a 'features' array.", 'error');
+                    return;
+                }
+                
+                const count = geojson.features.length;
+                let cropClasses = {};
+                geojson.features.forEach(f => {
+                    const label = (f.properties && (f.properties.class_label || f.properties.crop || f.properties.label)) || 'undefined';
+                    cropClasses[label] = (cropClasses[label] || 0) + 1;
+                });
+                
+                let classSummary = Object.entries(cropClasses).map(([cls, num]) => `${cls}: ${num}`).join(', ');
+                
+                document.getElementById('import-preview').classList.remove('d-none');
+                document.getElementById('import-count').innerText = count;
+                document.getElementById('import-classes').innerText = `Breakdown: [ ${classSummary} ]`;
+                
+                window.pendingGeoJson = geojson;
+                showToast(`Loaded ${count} spatial points. Click below to sync.`, 'success');
+            } catch(err) {
+                showToast("Failed to parse JSON schema. Verify format.", 'error');
+                console.error(err);
+            }
+        };
+        reader.readAsText(file);
+    }
+
+    // Sync imported points to Flask backend API
+    function syncImportedData() {
+        if (!window.pendingGeoJson) return;
+        
+        const btn = document.getElementById('sync-btn');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Synchronizing...';
+        
+        fetch('/api/import_training', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(window.pendingGeoJson)
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.imported !== undefined) {
+                showToast(`Success: Synced ${data.imported} ground truth points.`, 'success');
+                document.getElementById('import-preview').classList.add('d-none');
+                window.pendingGeoJson = null;
+                loadSamplingData();
+            } else {
+                showToast("Synchronization handshake failed.", 'error');
+            }
+        })
+        .catch(err => {
+            showToast("Database transmission timeout.", 'error');
+            console.error(err);
+        })
+        .finally(() => {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-cloud-upload-alt me-1"></i> Sync with Database';
+        });
+    }
+
+    // Direct Browser Download for CSV & GeoJSON formats
+    function exportData(format) {
+        const activeTab = document.querySelector('#samplingTabs .nav-link.active').id;
+        const isFieldTab = activeTab === 'field-tab';
+        const data = isFieldTab ? window.newData : window.trainingData;
+        const filename = isFieldTab ? 'agrinex_field_collections' : 'agrinex_training_surveys';
+        
+        if (!data || data.length === 0) {
+            showToast("Export cancelled: Dataset is empty.", 'error');
+            return;
+        }
+        
+        if (format === 'csv') {
+            let csvContent = '';
+            if (isFieldTab) {
+                csvContent += 'ID,Predicted_Class,Confidence,Latitude,Longitude,Timestamp,Notes\n';
+                data.forEach(item => {
+                    csvContent += `${item.id},${item.predicted_class},${item.confidence},${item.latitude},${item.longitude},"${item.timestamp}","${(item.notes || '').replace(/"/g, '""')}"\n`;
+                });
+            } else {
+                csvContent += 'ID,Class_Label,Latitude,Longitude,Acquisition_Date,Source,Notes\n';
+                data.forEach(item => {
+                    csvContent += `${item.id},${item.class_label},${item.latitude},${item.longitude},"${item.acquisition_date || ''}","${item.source || ''}","${(item.notes || '').replace(/"/g, '""')}"\n`;
+                });
+            }
+            triggerFileDownload(csvContent, `${filename}.csv`, 'text/csv');
+        } else if (format === 'geojson') {
+            const geojson = {
+                type: "FeatureCollection",
+                features: data.map(item => ({
+                    type: "Feature",
+                    geometry: {
+                        type: "Point",
+                        coordinates: [item.longitude, item.latitude]
+                    },
+                    properties: {
+                        id: item.id,
+                        class_label: isFieldTab ? item.predicted_class : item.class_label,
+                        confidence: isFieldTab ? item.confidence : null,
+                        notes: item.notes || null,
+                        date: isFieldTab ? item.timestamp : item.acquisition_date,
+                        source: isFieldTab ? "Field Collection" : (item.source || "QGIS/Mergin Map")
+                    }
+                }))
+            };
+            triggerFileDownload(JSON.stringify(geojson, null, 2), `${filename}.geojson`, 'application/json');
+        }
+    }
+
+    function triggerFileDownload(content, name, type) {
+        const a = document.createElement("a");
+        const file = new Blob([content], { type: type });
+        a.href = URL.createObjectURL(file);
+        a.download = name;
+        a.click();
+        showToast(`Exported file: ${name}`, 'success');
+    }
+
+    function showImageModal(src, cls, conf) {
+        document.getElementById('modal-image-img').src = src;
+        document.getElementById('modal-image-title').innerHTML = `<i class="fas fa-robot me-2" style="color: var(--primary-green);"></i> ${cls.toUpperCase()} — <span style="color: var(--primary-green); font-weight:700;">${conf}% Accuracy</span>`;
+        new bootstrap.Modal(document.getElementById('imageModal')).show();
+    }
+
+    // Drag and Drop listeners
+    const dropZone = document.getElementById('import-drop-zone');
+    dropZone.addEventListener('dragover', e => {
+        e.preventDefault();
+        dropZone.style.background = 'rgba(27, 77, 44, 0.06)';
+    });
+    dropZone.addEventListener('dragleave', () => {
+        dropZone.style.background = 'rgba(27, 77, 44, 0.02)';
+    });
+    dropZone.addEventListener('drop', e => {
+        e.preventDefault();
+        dropZone.style.background = 'rgba(27, 77, 44, 0.02)';
+        const file = e.dataTransfer.files[0];
+        if (file) handleGeoJsonFile(file);
+    });
+    document.getElementById('geoJsonInput').addEventListener('change', e => {
+        const file = e.target.files[0];
+        if (file) handleGeoJsonFile(file);
+    });
+
+    // Initialize Page Data
+    document.addEventListener("DOMContentLoaded", function() {
+        loadSamplingData();
+    });
+</script>
+{% endblock %}

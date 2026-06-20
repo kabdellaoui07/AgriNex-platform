@@ -1,0 +1,258 @@
+{% extends "base.html" %}
+{% block title %}Analytics - AgriNex{% endblock %}
+
+{% block head %}
+<!-- Script reference for Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+  .stat-card {
+    background: var(--surface-white) !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 14px;
+    transition: transform 0.2s, box-shadow 0.2s;
+    color: var(--text-dark);
+  }
+  .stat-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--hover-shadow);
+  }
+  .chart-container {
+    position: relative;
+    margin: auto;
+    height: 260px;
+    width: 260px;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-header mb-4 animate__animated animate__fadeIn">
+  <h1><i class="fas fa-chart-line me-2" style="color: var(--primary-green);"></i>Analytics Dashboard</h1>
+  <p class="text-muted">Descriptive analytical dashboard aggregating real-time deep learning inferences with database records</p>
+</div>
+
+<!-- ─────────────── 🟩 SECTION 1: INFO BOXES ─────────────── -->
+<div class="row g-3 mb-4">
+  <!-- Box 1: Total Model Inferences -->
+  <div class="col-md-6 col-lg-3">
+    <div class="card p-3">
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
+          <h6 class="text-muted small text-uppercase mb-1" style="font-size:0.8rem; font-weight:600;">AI Inferences</h6>
+          <h2 class="fw-bold mb-0 text-dark">{{ total }}</h2>
+        </div>
+        <div class="fs-1 opacity-50" style="color: var(--primary-green);"><i class="fas fa-brain"></i></div>
+      </div>
+      <div class="mt-2 small text-muted">Total processed images</div>
+    </div>
+  </div>
+  
+  <!-- Box 2: Field Survey Points (QGIS) -->
+  <div class="col-md-6 col-lg-3">
+    <div class="card p-3">
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
+          <h6 class="text-muted small text-uppercase mb-1" style="font-size:0.8rem; font-weight:600;">Ground Truths</h6>
+          <h2 class="fw-bold mb-0 text-dark">{{ train_count }}</h2>
+        </div>
+        <div class="fs-1 opacity-50" style="color: var(--primary-green);"><i class="fas fa-map-pin"></i></div>
+      </div>
+      <div class="mt-2 small text-muted">Synchronized QGIS markers</div>
+    </div>
+  </div>
+
+  <!-- Box 3: Cereal Detections -->
+  <div class="col-md-6 col-lg-3">
+    <div class="card p-3">
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
+          <h6 class="text-muted small text-uppercase mb-1" style="font-size:0.8rem; font-weight:600;">Cereal Crops</h6>
+          <h2 class="fw-bold mb-0 text-dark" id="box-cereal-count">0</h2>
+        </div>
+        <div class="fs-1 opacity-50" style="color: var(--primary-green);"><i class="fas fa-leaf"></i></div>
+      </div>
+      <div class="mt-2 small text-muted" id="box-cereal-conf">Avg Confidence: --</div>
+    </div>
+  </div>
+
+  <!-- Box 4: Potato Detections -->
+  <div class="col-md-6 col-lg-3">
+    <div class="card p-3">
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
+          <h6 class="text-muted small text-uppercase mb-1" style="font-size:0.8rem; font-weight:600;">Potato Crops</h6>
+          <h2 class="fw-bold mb-0 text-dark" id="box-potato-count">0</h2>
+        </div>
+        <div class="fs-1 opacity-50" style="color: var(--primary-green);"><i class="fas fa-leaf"></i></div>
+      </div>
+      <div class="mt-2 small text-muted" id="box-potato-conf">Avg Confidence: --</div>
+    </div>
+  </div>
+</div>
+
+<!-- ─────────────── 📊 SECTION 2: CHARTS & TABLES ─────────────── -->
+<div class="row g-4 mb-4">
+  <!-- Visual Analytics (Chart Box) -->
+  <div class="col-md-5">
+    <div class="card stat-card h-100">
+      <div class="card-header bg-transparent py-3">
+        <h6 class="m-0 fw-bold"><i class="fas fa-chart-pie me-2" style="color: var(--primary-green);"></i>Crop Classification Share</h6>
+      </div>
+      <div class="card-body d-flex align-items-center justify-content-center">
+        <div class="chart-container">
+          <canvas id="cropChart"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Inference Distribution Data Table -->
+  <div class="col-md-7">
+    <div class="card stat-card h-100">
+      <div class="card-header bg-transparent py-3">
+        <h6 class="m-0 fw-bold"><i class="fas fa-list-ol me-2" style="color: var(--primary-green);"></i>Model Diagnostics Breakdown</h6>
+      </div>
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table table-hover mb-0 align-middle">
+            <thead>
+              <tr>
+                <th>Predicted Crop</th>
+                <th>Detection Count</th>
+                <th>Mean Accuracy</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for row in by_class %}
+              <tr>
+                <td>
+                  {% if row.predicted_class|lower == 'cereal' %}
+                    <span class="badge-cereal">🌾 Cereal</span>
+                  {% elif row.predicted_class|lower == 'potato' %}
+                    <span class="badge-potato">🥔 Potato</span>
+                  {% else %}
+                    <span class="badge-undefined">❓ Undefined</span>
+                  {% endif %}
+                </td>
+                <td><strong>{{ row.count }}</strong> images</td>
+                <td><span class="fw-bold" style="color: var(--primary-green);">{{ (row.avg_conf * 100)|round(1) }}%</span></td>
+              </tr>
+              {% else %}
+              <tr>
+                <td colspan="3" class="text-center text-muted py-4">No data logged in database yet.</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─────────────── 📋 SECTION 3: RECENT ACTIVITIES ─────────────── -->
+<div class="row">
+  <div class="col-12">
+    <div class="card stat-card">
+      <div class="card-header bg-transparent py-3">
+        <h6 class="m-0 fw-bold"><i class="fas fa-history me-2" style="color: var(--primary-green);"></i>Recent System Activity Logs (Last 10)</h6>
+      </div>
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table table-hover mb-0 align-middle">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Visual Frame</th>
+                <th>Inferred Label</th>
+                <th>Confidence Level</th>
+                <th>Acquisition Time</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for item in recent %}
+              <tr>
+                <td><small class="text-muted">#{{ item.id }}</small></td>
+                <td>
+                  {% if item.image_path %}
+                    <img src="/static/uploads/{{ item.image_path }}" style="width:36px; height:36px; object-fit:cover; border-radius:6px; border:1px solid var(--border-color);">
+                  {% else %}
+                    <i class="fas fa-image text-muted"></i>
+                  {% endif %}
+                </td>
+                <td>
+                  {% if item.predicted_class|lower == 'cereal' %}
+                    <span class="badge-cereal">🌾 Cereal</span>
+                  {% elif item.predicted_class|lower == 'potato' %}
+                    <span class="badge-potato">🥔 Potato</span>
+                  {% else %}
+                    <span class="badge-undefined">❓ Undefined</span>
+                  {% endif %}
+                </td>
+                <td><span class="fw-bold" style="color: var(--primary-green);">{{ item.confidence }}%</span></td>
+                <td><small class="text-muted">{{ item.timestamp }}</small></td>
+              </tr>
+              {% else %}
+              <tr>
+                <td colspan="5" class="text-center text-muted py-4">No recent prediction runs found.</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  // Receive serialised data passed from Flask endpoint
+  const statsData = {{ dashboard_stats|safe if dashboard_stats is defined else '{}' }};
+  
+  // 1️⃣ Update info boxes dynamically
+  if (statsData.cereal) {
+      document.getElementById('box-cereal-count').innerText = statsData.cereal.count;
+      document.getElementById('box-cereal-conf').innerText = `Avg Confidence: ${statsData.cereal.avg_conf}%`;
+  }
+  if (statsData.potato) {
+      document.getElementById('box-potato-count').innerText = statsData.potato.count;
+      document.getElementById('box-potato-conf').innerText = `Avg Confidence: ${statsData.potato.avg_conf}%`;
+  }
+
+  // 2️⃣ Build doughnut chart
+  const labels = Object.keys(statsData).map(k => k.toUpperCase());
+  const counts = Object.values(statsData).map(v => v.count);
+  
+  const backgroundColors = Object.keys(statsData).map(k => {
+      if (k.toLowerCase() === 'cereal') return '#e5a93b';
+      if (k.toLowerCase() === 'potato') return '#8c6239';
+      return '#78909c';
+  });
+
+  const ctx = document.getElementById('cropChart').getContext('2d');
+  new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+          labels: labels,
+          datasets: [{
+              data: counts,
+              backgroundColor: backgroundColors,
+              borderWidth: 2,
+              borderColor: '#ffffff'
+          }]
+      },
+      options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+              legend: {
+                  position: 'bottom',
+                  labels: { color: 'var(--text-dark)', font: { family: 'Outfit', size: 12 } }
+              }
+          }
+      }
+  });
+</script>
+{% endblock %}
