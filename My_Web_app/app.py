@@ -114,6 +114,33 @@ class Survey(db.Model):
         }
 
 # ─────────────────────────────────────────────────────────────────────────
+#  AUTOMATIC DATABASE INITIALIZATION & SEEDING (Render Compatible)
+# ─────────────────────────────────────────────────────────────────────────
+# Create database tables automatically on Render startup
+with app.app_context():
+    db.create_all()
+
+    # Create default users
+    if User.query.count() == 0:
+        admin_user = User(
+            username="admin",
+            role="admin"
+        )
+        admin_user.set_password("admin")
+
+        collector_user = User(
+            username="collector",
+            role="collector"
+        )
+        collector_user.set_password("admin")
+
+        db.session.add(admin_user)
+        db.session.add(collector_user)
+        db.session.commit()
+
+        print("Default users created")
+
+# ─────────────────────────────────────────────────────────────────────────
 #  🎯 GLOBAL ROUTE GUARD & ROLE SECURITY
 # ─────────────────────────────────────────────────────────────────────────
 @app.before_request
@@ -241,7 +268,7 @@ def upload():
     
     predicted_class, confidence, img_base64 = predict_image(save_path)
 
-    # إدخال البيانات المحدثة مع التوقيت الجغرافي الحقيقي الموثق
+    # إدخل البيانات المحدثة مع التوقيت الجغرافي الحقيقي الموثق
     pred = Prediction(
         image_path=filename,
         predicted_class=predicted_class,
@@ -381,22 +408,11 @@ def custom_uploads(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
 # ─────────────────────────────────────────────────────────────────────────
-if __name__ == '__main__':
-    with app.app_context():
-        db.create_all()
-        # Seed default users if they don't exist
-        if User.query.count() == 0:
-            print("Seeding default users...")
-            admin_user = User(username='admin', role='admin')
-            admin_user.set_password('admin')
-            
-            collector_user = User(username='collector', role='collector')
-            collector_user.set_password('admin')
-            
-            db.session.add(admin_user)
-            db.session.add(collector_user)
-            db.session.commit()
-            print("Default users seeded successfully.")
-            
-    os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
-    app.run(host='0.0.0.0', port=5000, debug=True)
+os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+
+if __name__ == "__main__":
+    app.run(
+        host="0.0.0.0",
+        port=5000,
+        debug=True
+    )
