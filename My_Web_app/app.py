@@ -111,18 +111,14 @@ class Prediction(db.Model):
         }
 
 class Survey(db.Model):
-    """Existing 'Survey' table in pgAdmin (public schema)"""
     __tablename__ = 'Survey'
-    __table_args__ = {'schema': 'public', 'extend_existing': True}
     
-    fid              = db.Column(db.BigInteger, primary_key=True)
-    geom             = db.Column(NullType)
-    Date             = db.Column(db.DateTime)
-    classe           = db.Column(db.String(100))
-    Photo            = db.Column(db.String(255))
-    
-    latitude         = column_property(func.ST_Y(geom))
-    longitude        = column_property(func.ST_X(geom))
+    fid       = db.Column(db.BigInteger, primary_key=True)
+    latitude  = db.Column(db.Float)
+    longitude = db.Column(db.Float)
+    Date      = db.Column(db.DateTime)
+    classe    = db.Column(db.String(100))
+    Photo     = db.Column(db.String(255))
 
     def to_dict(self):
         return {
@@ -131,9 +127,7 @@ class Survey(db.Model):
             'longitude': self.longitude,
             'class_label': self.classe,
             'image_name': os.path.basename(self.Photo) if self.Photo else None,
-            'acquisition_date': self.Date.strftime('%Y-%m-%d') if self.Date else None,
-            'source': 'Mergin Map / QGIS',
-            'notes': ''
+            'source': 'Mergin Map / QGIS'
         }
 
 # ─────────────────────────────────────────────────────────────────────────
@@ -389,8 +383,7 @@ def import_training():
             latitude=coords[1],
             class_label=props.get('class_label'),
             image_name=props.get('image_name'),
-            acquisition_date=datetime.strptime(props['date'], '%Y-%m-%d') if props.get('date') else None,
-            notes=props.get('notes')
+            acquisition_date=datetime.strptime(props['date'], '%Y-%m-%d') if props.get('date') else None
         )
         db.session.add(sv)
         count += 1
