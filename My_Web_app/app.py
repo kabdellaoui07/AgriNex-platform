@@ -286,11 +286,19 @@ def results():
 @app.route('/map')
 @admin_required  # 🔒 متاح للـ Admin فقط
 def map_view():
-    predictions     = Prediction.query.all()
-    survey_points   = Survey.query.all()
-    return render_template('map.html',
+    predictions = Prediction.query.all()
+
+    try:
+        survey_points = Survey.query.all()
+        training = [s.to_dict() for s in survey_points]
+    except Exception as e:
+        print("Survey table not available:", e)
+        training = []
+
+    return render_template(
+        'map.html',
         predictions=json.dumps([p.to_dict() for p in predictions]),
-        training_points=json.dumps([s.to_dict() for s in survey_points])
+        training_points=json.dumps(training)
     )
 
 @app.route('/statistics')
@@ -322,11 +330,15 @@ def statistics():
     raw_recent = Prediction.query.order_by(Prediction.timestamp.desc()).limit(10).all()
     recent_serialized = [p.to_dict() for p in raw_recent]
     
-    survey_count = Survey.query.count()
-    survey_by_class = db.session.query(
-        Survey.classe,
-        func.count(Survey.fid).label('count')
-    ).group_by(Survey.classe).all()
+    try:
+        survey_count = Survey.query.count()
+        survey_by_class = db.session.query(
+            Survey.classe,
+            func.count(Survey.fid).label('count')
+        ).group_by(Survey.classe).all()
+    except Exception:
+        survey_count = 0
+        survey_by_class = []
 
     return render_template('statistics.html',
         total=total,
@@ -340,9 +352,11 @@ def statistics():
 @app.route('/api/sampling-data')
 @admin_required
 def get_sampling_data():
-    # جلب بيانات التدريب (التي استخدمتها للموديل)
-    training = [s.to_dict() for s in Survey.query.all()]
-    # جلب البيانات التي جمعها المستخدمون عبر الموبايل
+    try:
+        training = [s.to_dict() for s in Survey.query.all()]
+    except Exception:
+        training = []
+        
     new_data = [p.to_dict() for p in Prediction.query.all()]
     
     return jsonify({
@@ -367,8 +381,11 @@ def api_predictions():
 @app.route('/api/training_points')
 @admin_required  # 🔒 متاح للـ Admin فقط
 def api_training_points():
-    points = Survey.query.all()
-    return jsonify([t.to_dict() for t in points])
+    try:
+        points = Survey.query.all()
+        return jsonify([t.to_dict() for t in points])
+    except Exception:
+        return jsonify([])
 
 @app.route('/api/import_training', methods=['POST'])
 @admin_required  # 🔒 متاح للـ Admin فقط
