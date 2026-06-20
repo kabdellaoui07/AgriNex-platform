@@ -41,7 +41,7 @@ if db_url:
         db_url = db_url.replace('postgresql://', 'postgresql+psycopg://', 1)
     app.config['SQLALCHEMY_DATABASE_URI'] = db_url
 else:
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg://postgres:admin@localhost:5432/mygeoaidb'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
@@ -94,6 +94,7 @@ class Survey(db.Model):
     __tablename__ = 'Survey'
     
     fid       = db.Column(db.BigInteger, primary_key=True)
+    geom      = db.Column(db.LargeBinary, nullable=True)
     latitude  = db.Column(db.Float)
     longitude = db.Column(db.Float)
     Date      = db.Column(db.DateTime)
