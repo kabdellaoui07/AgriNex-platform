@@ -108,6 +108,7 @@ class Survey(db.Model):
             'longitude': self.longitude,
             'class_label': self.classe,
             'image_name': os.path.basename(self.Photo) if self.Photo else None,
+            'acquisition_date': self.Date.strftime('%Y-%m-%d') if self.Date else None,
             'source': 'Mergin Map / QGIS'
         }
 
