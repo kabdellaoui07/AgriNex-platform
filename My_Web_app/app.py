@@ -63,28 +63,7 @@ class User(db.Model):
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
-# إنشاء الجداول والمستخدمين الافتراضيين مباشرة بعد كلاس User لتفادي مشاكل الـ Seeding
-with app.app_context():
-    db.create_all()
 
-    if User.query.count() == 0:
-        admin_user = User(
-            username="admin",
-            role="admin"
-        )
-        admin_user.set_password("admin")
-
-        collector_user = User(
-            username="collector",
-            role="collector"
-        )
-        collector_user.set_password("admin")
-
-        db.session.add(admin_user)
-        db.session.add(collector_user)
-        db.session.commit()
-
-        print("Default users created")
 
 class Prediction(db.Model):
     __tablename__ = 'predictions'
@@ -99,11 +78,12 @@ class Prediction(db.Model):
     notes           = db.Column(db.Text)
 
     def to_dict(self):
+        conf_val = self.confidence or 0.0
         return {
             'id': self.id,
             'image_path': self.image_path,
             'predicted_class': self.predicted_class,
-            'confidence': round(self.confidence * 100, 1) if self.confidence <= 1.0 else round(self.confidence, 1),
+            'confidence': round(conf_val * 100, 1) if conf_val <= 1.0 else round(conf_val, 1),
             'latitude': self.latitude,
             'longitude': self.longitude,
             'timestamp': self.timestamp.strftime('%d/%m/%Y %H:%M') if self.timestamp else '—',
@@ -129,6 +109,36 @@ class Survey(db.Model):
             'image_name': os.path.basename(self.Photo) if self.Photo else None,
             'source': 'Mergin Map / QGIS'
         }
+
+# ─────────────────────────────────────────────────────────────────────────
+#  DATABASE INITIALIZATION & SEEDING (Executed on startup)
+# ─────────────────────────────────────────────────────────────────────────
+def init_db():
+    with app.app_context():
+        # Create all tables safely (users, predictions, Survey)
+        db.create_all()
+
+        # Seed default users if users table is empty
+        if User.query.count() == 0:
+            admin_user = User(
+                username="admin",
+                role="admin"
+            )
+            admin_user.set_password("admin")
+
+            collector_user = User(
+                username="collector",
+                role="collector"
+            )
+            collector_user.set_password("admin")
+
+            db.session.add(admin_user)
+            db.session.add(collector_user)
+            db.session.commit()
+            print("Default users created successfully.")
+
+# Run database initialization automatically at startup
+init_db()
 
 # ─────────────────────────────────────────────────────────────────────────
 #  🎯 GLOBAL ROUTE GUARD & ROLE SECURITY
@@ -279,14 +289,23 @@ def upload():
 @app.route('/results')
 @admin_required  # 🔒 متاح للـ Admin فقط
 def results():
-    raw_predictions = Prediction.query.order_by(Prediction.timestamp.desc()).all()
-    predictions_serialized = [p.to_dict() for p in raw_predictions]
+    try:
+        raw_predictions = Prediction.query.order_by(Prediction.timestamp.desc()).all()
+        predictions_serialized = [p.to_dict() for p in raw_predictions]
+    except Exception as e:
+        print("Error fetching predictions for history:", e)
+        predictions_serialized = []
     return render_template('results.html', predictions=predictions_serialized)
 
 @app.route('/map')
 @admin_required  # 🔒 متاح للـ Admin فقط
 def map_view():
-    predictions = Prediction.query.all()
+    try:
+        predictions = Prediction.query.all()
+        preds_serialized = [p.to_dict() for p in predictions]
+    except Exception as e:
+        print("Error fetching predictions for map:", e)
+        preds_serialized = []
 
     try:
         survey_points = Survey.query.all()
@@ -297,7 +316,7 @@ def map_view():
 
     return render_template(
         'map.html',
-        predictions=json.dumps([p.to_dict() for p in predictions]),
+        predictions=json.dumps(preds_serialized),
         training_points=json.dumps(training)
     )
 
@@ -305,40 +324,48 @@ def map_view():
 @admin_required  # 🔒 متاح للـ Admin فقط
 def statistics():
     from sqlalchemy import func
-    total      = Prediction.query.count()
-    by_class   = db.session.query(
-        Prediction.predicted_class,
-        func.count(Prediction.id).label('count'),
-        func.avg(Prediction.confidence).label('avg_conf')
-    ).group_by(Prediction.predicted_class).all()
-
+    
+    total = 0
     by_class_serialized = []
     dashboard_stats = {}
-    for row in by_class:
-        calculated_conf = row.avg_conf if row.avg_conf > 1.0 else (row.avg_conf or 0) * 100
-        
-        by_class_serialized.append({
-            'predicted_class': row.predicted_class,
-            'count': row.count,
-            'avg_conf': round(calculated_conf / 100, 4)
-        })
-        dashboard_stats[row.predicted_class] = {
-            'count': row.count,
-            'avg_conf': round(calculated_conf, 1)
-        }
+    recent_serialized = []
+    survey_count = 0
+    survey_by_class = []
 
-    raw_recent = Prediction.query.order_by(Prediction.timestamp.desc()).limit(10).all()
-    recent_serialized = [p.to_dict() for p in raw_recent]
-    
+    try:
+        total = Prediction.query.count()
+        by_class = db.session.query(
+            Prediction.predicted_class,
+            func.count(Prediction.id).label('count'),
+            func.avg(Prediction.confidence).label('avg_conf')
+        ).group_by(Prediction.predicted_class).all()
+
+        for row in by_class:
+            calculated_conf = row.avg_conf if row.avg_conf > 1.0 else (row.avg_conf or 0) * 100
+            
+            by_class_serialized.append({
+                'predicted_class': row.predicted_class,
+                'count': row.count,
+                'avg_conf': round(calculated_conf / 100, 4)
+            })
+            dashboard_stats[row.predicted_class] = {
+                'count': row.count,
+                'avg_conf': round(calculated_conf, 1)
+            }
+
+        raw_recent = Prediction.query.order_by(Prediction.timestamp.desc()).limit(10).all()
+        recent_serialized = [p.to_dict() for p in raw_recent]
+    except Exception as e:
+        print("Error fetching prediction statistics:", e)
+
     try:
         survey_count = Survey.query.count()
         survey_by_class = db.session.query(
             Survey.classe,
             func.count(Survey.fid).label('count')
         ).group_by(Survey.classe).all()
-    except Exception:
-        survey_count = 0
-        survey_by_class = []
+    except Exception as e:
+        print("Error fetching survey statistics:", e)
 
     return render_template('statistics.html',
         total=total,
@@ -357,7 +384,10 @@ def get_sampling_data():
     except Exception:
         training = []
         
-    new_data = [p.to_dict() for p in Prediction.query.all()]
+    try:
+        new_data = [p.to_dict() for p in Prediction.query.all()]
+    except Exception:
+        new_data = []
     
     return jsonify({
         'training_data': training,
@@ -375,8 +405,11 @@ def sampling():
 @app.route('/api/predictions')
 @admin_required  # 🔒 متاح للـ Admin فقط
 def api_predictions():
-    preds = Prediction.query.order_by(Prediction.timestamp.desc()).all()
-    return jsonify([p.to_dict() for p in preds])
+    try:
+        preds = Prediction.query.order_by(Prediction.timestamp.desc()).all()
+        return jsonify([p.to_dict() for p in preds])
+    except Exception:
+        return jsonify([])
 
 @app.route('/api/training_points')
 @admin_required  # 🔒 متاح للـ Admin فقط
@@ -398,9 +431,9 @@ def import_training():
         sv = Survey(
             longitude=coords[0],
             latitude=coords[1],
-            class_label=props.get('class_label'),
-            image_name=props.get('image_name'),
-            acquisition_date=datetime.strptime(props['date'], '%Y-%m-%d') if props.get('date') else None
+            classe=props.get('class_label'),
+            Photo=props.get('image_name'),
+            Date=datetime.strptime(props['date'], '%Y-%m-%d') if props.get('date') else None
         )
         db.session.add(sv)
         count += 1
