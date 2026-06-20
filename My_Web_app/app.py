@@ -63,6 +63,29 @@ class User(db.Model):
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
+# إنشاء الجداول والمستخدمين الافتراضيين مباشرة بعد كلاس User لتفادي مشاكل الـ Seeding
+with app.app_context():
+    db.create_all()
+
+    if User.query.count() == 0:
+        admin_user = User(
+            username="admin",
+            role="admin"
+        )
+        admin_user.set_password("admin")
+
+        collector_user = User(
+            username="collector",
+            role="collector"
+        )
+        collector_user.set_password("admin")
+
+        db.session.add(admin_user)
+        db.session.add(collector_user)
+        db.session.commit()
+
+        print("Default users created")
+
 class Prediction(db.Model):
     __tablename__ = 'predictions'
     id              = db.Column(db.Integer, primary_key=True)
@@ -112,33 +135,6 @@ class Survey(db.Model):
             'source': 'Mergin Map / QGIS',
             'notes': ''
         }
-
-# ─────────────────────────────────────────────────────────────────────────
-#  AUTOMATIC DATABASE INITIALIZATION & SEEDING (Render Compatible)
-# ─────────────────────────────────────────────────────────────────────────
-# Create database tables automatically on Render startup
-with app.app_context():
-    db.create_all()
-
-    # Create default users
-    if User.query.count() == 0:
-        admin_user = User(
-            username="admin",
-            role="admin"
-        )
-        admin_user.set_password("admin")
-
-        collector_user = User(
-            username="collector",
-            role="collector"
-        )
-        collector_user.set_password("admin")
-
-        db.session.add(admin_user)
-        db.session.add(collector_user)
-        db.session.commit()
-
-        print("Default users created")
 
 # ─────────────────────────────────────────────────────────────────────────
 #  🎯 GLOBAL ROUTE GUARD & ROLE SECURITY
@@ -268,7 +264,7 @@ def upload():
     
     predicted_class, confidence, img_base64 = predict_image(save_path)
 
-    # إدخل البيانات المحدثة مع التوقيت الجغرافي الحقيقي الموثق
+    # إدخال البيانات المحدثة مع التوقيت الجغرافي الحقيقي الموثق
     pred = Prediction(
         image_path=filename,
         predicted_class=predicted_class,
@@ -359,6 +355,7 @@ def get_sampling_data():
         'training_data': training,
         'new_data': new_data
     })
+
 @app.route('/sampling')
 @admin_required  # لضمان حماية الصفحة
 def sampling():
@@ -413,6 +410,5 @@ os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 if __name__ == "__main__":
     app.run(
         host="0.0.0.0",
-        port=5000,
-        debug=True
+        port=5000
     )
