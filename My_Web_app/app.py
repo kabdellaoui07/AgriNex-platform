@@ -108,7 +108,7 @@ class Survey(db.Model):
 # ─────────────────────────────────────────────────────────────────────────
 @app.before_request
 def require_login():
-    allowed_routes = ['login', 'static']
+    allowed_routes = ['login', 'static', 'serve_sw', 'serve_manifest']
     if request.endpoint not in allowed_routes and not session.get('logged_in'):
         return redirect(url_for('login'))
 
@@ -196,6 +196,14 @@ def logout():
 # ─────────────────────────────────────────────────────────────────────────
 #  ROUTES: APPLICATION
 # ─────────────────────────────────────────────────────────────────────────
+@app.route('/sw.js')
+def serve_sw():
+    return app.send_static_file('sw.js')
+
+@app.route('/manifest.json')
+def serve_manifest():
+    return app.send_static_file('manifest.json')
+
 @app.route('/')
 def index():
     return render_template('index.html')

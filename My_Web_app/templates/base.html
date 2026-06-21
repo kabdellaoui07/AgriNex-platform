@@ -4,7 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{% block title %}AgriNex — Agricultural Monitoring System{% endblock %}</title>
-  <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='images/agrinex-icon-exact.svg') }}">
+  <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='images/Design sans titre.svg') }}">
+  <link rel="manifest" href="/manifest.json">
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
@@ -355,7 +356,7 @@
 
 <div class="mobile-header">
   <a href="#" class="mobile-brand d-flex align-items-center gap-2" style="text-decoration: none;">
-    <img src="{{ url_for('static', filename='images/agrinex_logo_v6_c.png') }}" alt="AgriNex Logo" style="height: 32px; width: auto;">
+    <img src="{{ url_for('static', filename='images/Design sans titre.svg') }}" alt="AgriNex Logo" style="height: 32px; width: auto;">
     <span class="fw-bold text-white" style="font-size: 1.25rem; letter-spacing: 0.5px;">AgriNex</span>
   </a>
   <button class="menu-toggle" id="menuToggleBtn">
@@ -365,7 +366,7 @@
 
 <div class="sidebar" id="appSidebar">
   <div class="sidebar-brand d-none d-lg-flex flex-column align-items-center text-center gap-2" style="padding: 30px 20px 20px 20px; border-bottom: 1px solid rgba(255,255,255,0.06); margin-bottom: 15px; width: 100%;">
-    <img src="{{ url_for('static', filename='images/agrinex_logo_v6_c.png') }}" alt="AgriNex Logo" style="height: 50px; width: auto;">
+    <img src="{{ url_for('static', filename='images/Design sans titre.svg') }}" alt="AgriNex Logo" style="height: 50px; width: auto;">
     <h3 class="fw-bold text-white m-0" style="font-size: 1.45rem; letter-spacing: 0.5px;">AgriNex</h3>
     <span style="font-size: 0.72rem; color: rgba(255,255,255,0.65); white-space: normal; line-height: 1.4; font-weight: 500;">GeoAI Agricultural Platform</span>
   </div>
@@ -432,6 +433,15 @@ document.addEventListener('click', function(event) {
     toggleBtn.querySelector('i').className = 'fas fa-bars';
   }
 });
+
+// Service Worker Registration
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js')
+      .then(reg => console.log('Service Worker registered successfully:', reg.scope))
+      .catch(err => console.error('Service Worker registration failed:', err));
+  });
+}
 </script>
 {% block scripts %}{% endblock %}
 </body>
