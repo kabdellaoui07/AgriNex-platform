@@ -18,7 +18,7 @@ import io
 
 app = Flask(__name__)
 
-# Secret key for encrypting sessions (essential for login security)
+# Secret key for encrypting sessions
 app.secret_key = 'agrocyber_secret_glass_key_2026'
 
 # Secure cookie configuration
@@ -31,7 +31,6 @@ app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 app.config['UPLOAD_FOLDER'] = 'static/uploads'
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 
-# دمج إعداد الاتصال بقاعدة البيانات لـ PostgreSQL و الـ Drive الميداني
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg://postgres:admin@localhost:5432/mygeoaidb'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
@@ -45,7 +44,7 @@ class User(db.Model):
     id            = db.Column(db.Integer, primary_key=True)
     username      = db.Column(db.String(80), unique=True, nullable=False)
     password_hash = db.Column(db.String(255), nullable=False)
-    role          = db.Column(db.String(20), nullable=False) # 'admin' or 'collector'
+    role          = db.Column(db.String(20), nullable=False) 
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -61,7 +60,6 @@ class Prediction(db.Model):
     confidence      = db.Column(db.Float)
     latitude        = db.Column(db.Float)
     longitude       = db.Column(db.Float)
-    # حقل الوقت يستقبل التوقيت التلقائي كملاذ أخير إذا لم يرسله الموبايل
     timestamp       = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
     notes           = db.Column(db.Text)
 
@@ -78,18 +76,17 @@ class Prediction(db.Model):
         }
 
 class Survey(db.Model):
-    """Existing 'Survey' table in pgAdmin (public schema)"""
     __tablename__ = 'Survey'
     __table_args__ = {'schema': 'public', 'extend_existing': True}
     
-    fid              = db.Column(db.BigInteger, primary_key=True)
-    geom             = db.Column(NullType)
-    Date             = db.Column(db.DateTime)
-    classe           = db.Column(db.String(100))
-    Photo            = db.Column(db.String(255))
+    fid            = db.Column(db.BigInteger, primary_key=True)
+    geom           = db.Column(NullType)
+    Date           = db.Column(db.DateTime)
+    classe         = db.Column(db.String(100))
+    Photo          = db.Column(db.String(255))
     
-    latitude         = column_property(func.ST_Y(geom))
-    longitude        = column_property(func.ST_X(geom))
+    latitude       = column_property(func.ST_Y(geom))
+    longitude      = column_property(func.ST_X(geom))
 
     def to_dict(self):
         return {
@@ -112,7 +109,6 @@ def require_login():
     if request.endpoint not in allowed_routes and not session.get('logged_in'):
         return redirect(url_for('login'))
 
-# 🔒 دالة التحقق البرمجية لمنع الـ Collector وحماية لوحات التحكم الإدارية للأدمن
 def admin_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
@@ -165,18 +161,16 @@ def predict_image(img_path):
     return CLASS_NAMES[idx], float(preds[idx]), img_base64
 
 # ─────────────────────────────────────────────────────────────────────────
-#  ROUTES: AUTHENTICATION (Login / Logout)
+#  ROUTES
 # ─────────────────────────────────────────────────────────────────────────
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if session.get('logged_in'):
         return redirect(url_for('index'))
-
     if request.method == 'POST':
         role = request.form.get('role')
         username = request.form.get('username')
         password = request.form.get('password')
-        
         user = User.query.filter_by(username=username).first()
         if user and user.check_password(password) and user.role == role:
             session['logged_in'] = True
@@ -185,28 +179,12 @@ def login():
             return redirect(url_for('index'))
         else:
             return render_template('login.html', error="Invalid credentials.")
-            
     return render_template('login.html')
 
 @app.route('/logout')
 def logout():
     session.clear()
     return redirect(url_for('login'))
-
-# ─────────────────────────────────────────────────────────────────────────
-#  ROUTES: APPLICATION
-# ─────────────────────────────────────────────────────────────────────────
-@app.route('/sw.js')
-def serve_sw():
-    return app.send_static_file('sw.js')
-
-@app.route('/manifest.json')
-def serve_manifest():
-    return app.send_static_file('manifest.json')
-
-@app.route('/favicon.ico')
-def serve_favicon():
-    return app.send_static_file('favicon.ico')
 
 @app.route('/')
 def index():
@@ -216,178 +194,120 @@ def index():
 def upload():
     if 'image' not in request.files:
         return jsonify({'error': 'No image provided'}), 400
-
     file = request.files['image']
-    lat  = request.form.get('latitude',  type=float)
-    lon  = request.form.get('longitude', type=float)
+    lat = request.form.get('latitude', type=float)
+    lon = request.form.get('longitude', type=float)
     notes = request.form.get('notes', '')
-    
-    # 🕒 استقبال الوقت الفعلي لالتقاط العينة من الهاتف وتحويل صيغته
     captured_at_str = request.form.get('captured_at')
+    
     if captured_at_str:
         try:
-            # تحويل صيغة ISO القادمة من المتصفح إلى كائن دات تايم متوافق مع البايثون
             timestamp_val = datetime.fromisoformat(captured_at_str.replace('Z', '+00:00'))
         except ValueError:
             timestamp_val = datetime.now(timezone.utc)
     else:
         timestamp_val = datetime.now(timezone.utc)
 
-    filename  = f"{datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')}_{file.filename}"
+    filename = f"{datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')}_{file.filename}"
     save_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
     file.save(save_path)
-    
     predicted_class, confidence, img_base64 = predict_image(save_path)
 
-    # إدخال البيانات المحدثة مع التوقيت الجغرافي الحقيقي الموثق
-    pred = Prediction(
-        image_path=filename,
-        predicted_class=predicted_class,
-        confidence=confidence,
-        latitude=lat,
-        longitude=lon,
-        timestamp=timestamp_val, # التوقيت الفعلي الدقيق للعمل الميداني
-        notes=notes
-    )
+    pred = Prediction(image_path=filename, predicted_class=predicted_class, confidence=confidence, 
+                      latitude=lat, longitude=lon, timestamp=timestamp_val, notes=notes)
     db.session.add(pred)
     db.session.commit()
-
     response_data = pred.to_dict()
     response_data['image_base64'] = img_base64
-
     return jsonify({'success': True, 'prediction': response_data})
 
 @app.route('/results')
-@admin_required  # 🔒 متاح للـ Admin فقط
+@admin_required
 def results():
     raw_predictions = Prediction.query.order_by(Prediction.timestamp.desc()).all()
     predictions_serialized = [p.to_dict() for p in raw_predictions]
     return render_template('results.html', predictions=predictions_serialized)
 
 @app.route('/map')
-@admin_required  # 🔒 متاح للـ Admin فقط
+@admin_required
 def map_view():
-    predictions     = Prediction.query.all()
-    survey_points   = Survey.query.all()
+    predictions = Prediction.query.all()
+    survey_points = Survey.query.all()
     return render_template('map.html',
         predictions=json.dumps([p.to_dict() for p in predictions]),
         training_points=json.dumps([s.to_dict() for s in survey_points])
     )
 
 @app.route('/statistics')
-@admin_required  # 🔒 متاح للـ Admin فقط
+@admin_required
 def statistics():
-    from sqlalchemy import func
-    total      = Prediction.query.count()
-    by_class   = db.session.query(
-        Prediction.predicted_class,
-        func.count(Prediction.id).label('count'),
-        func.avg(Prediction.confidence).label('avg_conf')
-    ).group_by(Prediction.predicted_class).all()
-
+    total = Prediction.query.count()
+    by_class = db.session.query(Prediction.predicted_class, func.count(Prediction.id).label('count'), 
+                                func.avg(Prediction.confidence).label('avg_conf')).group_by(Prediction.predicted_class).all()
     by_class_serialized = []
     dashboard_stats = {}
     for row in by_class:
         calculated_conf = row.avg_conf if row.avg_conf > 1.0 else (row.avg_conf or 0) * 100
-        
-        by_class_serialized.append({
-            'predicted_class': row.predicted_class,
-            'count': row.count,
-            'avg_conf': round(calculated_conf / 100, 4)
-        })
-        dashboard_stats[row.predicted_class] = {
-            'count': row.count,
-            'avg_conf': round(calculated_conf, 1)
-        }
-
+        by_class_serialized.append({'predicted_class': row.predicted_class, 'count': row.count, 'avg_conf': round(calculated_conf / 100, 4)})
+        dashboard_stats[row.predicted_class] = {'count': row.count, 'avg_conf': round(calculated_conf, 1)}
+    
     raw_recent = Prediction.query.order_by(Prediction.timestamp.desc()).limit(10).all()
-    recent_serialized = [p.to_dict() for p in raw_recent]
-    
     survey_count = Survey.query.count()
-    survey_by_class = db.session.query(
-        Survey.classe,
-        func.count(Survey.fid).label('count')
-    ).group_by(Survey.classe).all()
+    survey_by_class = db.session.query(Survey.classe, func.count(Survey.fid).label('count')).group_by(Survey.classe).all()
+    return render_template('statistics.html', total=total, by_class=by_class_serialized, dashboard_stats=json.dumps(dashboard_stats), 
+                           recent=[p.to_dict() for p in raw_recent], train_count=survey_count, train_by_class=survey_by_class)
 
-    return render_template('statistics.html',
-        total=total,
-        by_class=by_class_serialized,
-        dashboard_stats=json.dumps(dashboard_stats),
-        recent=recent_serialized,
-        train_count=survey_count,
-        train_by_class=survey_by_class
-    )
-
-@app.route('/api/sampling-data')
-@admin_required
-def get_sampling_data():
-    # جلب بيانات التدريب (التي استخدمتها للموديل)
-    training = [s.to_dict() for s in Survey.query.all()]
-    # جلب البيانات التي جمعها المستخدمون عبر الموبايل
-    new_data = [p.to_dict() for p in Prediction.query.all()]
-    
-    return jsonify({
-        'training_data': training,
-        'new_data': new_data
-    })
 @app.route('/sampling')
-@admin_required  # لضمان حماية الصفحة
+@admin_required
 def sampling():
     return render_template('sampling.html')
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        username = request.form.get('username')
+        password = request.form.get('password')
+        
+        # التأكد من أن الحقول ليست فارغة
+        if not username or not password:
+            return "Username and password are required", 400
 
-# ─────────────────────────────────────────────────────────────────────────
-#  API JSON ENDPOINTS
-# ─────────────────────────────────────────────────────────────────────────
-@app.route('/api/predictions')
-@admin_required  # 🔒 متاح للـ Admin فقط
-def api_predictions():
-    preds = Prediction.query.order_by(Prediction.timestamp.desc()).all()
-    return jsonify([p.to_dict() for p in preds])
+        # التحقق مما إذا كان المستخدم موجوداً مسبقاً
+        existing = User.query.filter_by(username=username).first()
+        if existing:
+            return "User already exists", 400
 
-@app.route('/api/training_points')
-@admin_required  # 🔒 متاح للـ Admin فقط
-def api_training_points():
-    points = Survey.query.all()
-    return jsonify([t.to_dict() for t in points])
-
-@app.route('/api/import_training', methods=['POST'])
-@admin_required  # 🔒 متاح للـ Admin فقط
-def import_training():
-    data = request.get_json()
-    count = 0
-    for row in data.get('features', []):
-        props = row.get('properties', {})
-        coords = row.get('geometry', {}).get('coordinates', [None, None])
-        sv = Survey(
-            longitude=coords[0],
-            latitude=coords[1],
-            class_label=props.get('class_label'),
-            image_name=props.get('image_name'),
-            acquisition_date=datetime.strptime(props['date'], '%Y-%m-%d') if props.get('date') else None,
-            notes=props.get('notes')
+        # إنشاء مستخدم جديد بدور 'collector' دائماً كما طلبت
+        new_user = User(
+            username=username,
+            role="collector"
         )
-        db.session.add(sv)
-        count += 1
-    db.session.commit()
-    return jsonify({'imported': count})
+        new_user.set_password(password)
+
+        db.session.add(new_user)
+        db.session.commit()
+
+        return "Account created successfully! <a href='/login'>Login here</a>"
+
+    return render_template('register.html')
 
 # ─────────────────────────────────────────────────────────────────────────
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
-        # Seed default users if they don't exist
-        if User.query.count() == 0:
-            print("Seeding default users...")
+
+        # create admin only if not exists
+        if User.query.filter_by(username='admin').first() is None:
             admin_user = User(username='admin', role='admin')
             admin_user.set_password('admin')
-            
+            db.session.add(admin_user)
+
+        # create collector only if not exists
+        if User.query.filter_by(username='collector').first() is None:
             collector_user = User(username='collector', role='collector')
             collector_user.set_password('admin')
-            
-            db.session.add(admin_user)
             db.session.add(collector_user)
-            db.session.commit()
-            print("Default users seeded successfully.")
+
+        db.session.commit()
             
     os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
     app.run(debug=True)

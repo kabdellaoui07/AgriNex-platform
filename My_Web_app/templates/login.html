@@ -11,19 +11,16 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
   <style>
-    /* ─────────────────────────────────────────────────────────────────────────
-       AGRINEX LIGHT AGRICULTURAL THEME
-       ───────────────────────────────────────────────────────────────────────── */
     :root {
-      --bg-cream: #f6f5f0;           /* Soft light cream background */
-      --surface-white: #ffffff;      /* Clean white surfaces */
-      --primary-green: #1b4d2c;      /* Deep agricultural green */
-      --leaf-green: #2ecc71;         /* Natural leaf green */
-      --text-dark: #1b261e;          /* Clean dark text */
-      --text-muted: #627267;         /* Sage-charcoal muted text */
-      --border-color: rgba(27, 77, 44, 0.08); /* Soft organic borders */
-      --font-family: 'Outfit', 'Segoe UI', -apple-system, sans-serif;
-      --card-shadow: 0 15px 40px rgba(27, 77, 44, 0.05), 0 2px 10px rgba(0, 0, 0, 0.02);
+      --bg-cream: #f6f5f0;
+      --surface-white: #ffffff;
+      --primary-green: #1b4d2c;
+      --leaf-green: #2ecc71;
+      --text-dark: #1b261e;
+      --text-muted: #627267;
+      --border-color: rgba(27, 77, 44, 0.08);
+      --font-family: 'Outfit', sans-serif;
+      --card-shadow: 0 15px 40px rgba(27, 77, 44, 0.05);
     }
 
     body {
@@ -36,215 +33,90 @@
       justify-content: center;
       margin: 0;
       padding: 20px;
-      position: relative;
-      overflow-x: hidden;
     }
 
-    /* Ambient natural background gradient glow */
-    body::before {
-      content: "";
-      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-      background: radial-gradient(circle at 50% 30%, rgba(46, 204, 113, 0.06), transparent 60%);
-      z-index: -1;
-      pointer-events: none;
-    }
-
-    /* Elegant login card */
     .login-card {
-      background: var(--surface-white) !important;
-      border: 1px solid var(--border-color) !important;
-      border-radius: 20px !important;
-      box-shadow: var(--card-shadow) !important;
+      background: var(--surface-white);
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      box-shadow: var(--card-shadow);
       width: 100%;
       max-width: 420px;
       padding: 45px 35px;
-      z-index: 10;
-    }
-
-    .brand-section i {
-      color: var(--primary-green);
-      font-size: 2.5rem;
-      filter: drop-shadow(0 4px 10px rgba(27, 77, 44, 0.15));
-      margin-bottom: 12px;
-    }
-
-    .brand-section h2 {
-      letter-spacing: 0.5px;
-      color: var(--primary-green);
-    }
-
-    .brand-section h2 span {
-      color: var(--leaf-green);
-      font-weight: 400;
-    }
-
-    .form-label {
-      color: var(--text-dark);
-      font-size: 0.88rem;
-      font-weight: 600;
-      margin-left: 2px;
-      margin-bottom: 6px;
-    }
-
-    /* Modern cream-tinted light inputs */
-    .input-group-text {
-      background-color: #fcfbfa !important;
-      border: 1px solid var(--border-color) !important;
-      border-right: none !important;
-      color: var(--text-muted) !important;
-      border-radius: 12px 0 0 12px;
-      font-size: 0.95rem;
     }
 
     .form-control, .form-select {
-      background-color: #fdfdfc !important;
-      border: 1px solid var(--border-color) !important;
-      color: var(--text-dark) !important;
       border-radius: 12px;
       padding: 12px 16px;
-      font-size: 0.95rem;
+      border: 1px solid var(--border-color);
     }
 
-    /* Align fields containing side icons */
-    .input-group .form-control, .input-group .form-select {
-      border-radius: 0 12px 12px 0;
-      border-left: none !important;
-    }
-
-    .form-control::placeholder {
-      color: #a0aba2;
-      font-weight: 300;
-    }
-
-    /* Soft forest-green glow on focus */
-    .form-control:focus, .form-select:focus {
-      border-color: var(--primary-green) !important;
-      box-shadow: 0 0 0 4px rgba(27, 77, 44, 0.08) !important;
-    }
-    
-    .input-group:focus-within .input-group-text {
-      border-color: var(--primary-green) !important;
-    }
-
-    .form-select option {
-      background-color: var(--surface-white);
-      color: var(--text-dark);
-    }
-
-    /* Premium forest green button */
     .btn-login {
-      background: var(--primary-green) !important;
-      color: #ffffff !important;
-      font-weight: 600 !important;
-      border: none !important;
-      border-radius: 12px !important;
+      background: var(--primary-green);
+      color: #ffffff;
+      border-radius: 12px;
       padding: 13px;
-      font-size: 1rem;
-      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-      box-shadow: 0 4px 15px rgba(27, 77, 44, 0.15);
+      transition: 0.3s;
     }
 
     .btn-login:hover {
-      background: #143a21 !important;
-      transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(27, 77, 44, 0.25);
+      background: #143a21;
     }
 
-    .btn-login:active {
-      transform: translateY(0);
-    }
-
-    /* Elegant custom warning alert */
     .alert-custom {
       background: #fdf2f2;
       border: 1px solid #fbd5d5;
       color: #9b1c1c;
       border-radius: 12px;
-      font-size: 0.88rem;
-      padding: 12px;
+      padding: 10px;
+      font-size: 0.85rem;
+    }
   </style>
 </head>
 <body>
 
-<!-- Splash Screen Overlay (Plain white with centered green leaf pin) -->
-<div id="pwa-splash" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: #ffffff; z-index: 99999; display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 1; transition: opacity 0.4s cubic-bezier(0.25, 1, 0.5, 1); pointer-events: none;">
-  <div style="text-align: center;">
-    <img src="{{ url_for('static', filename='images/logo-agrinex.png') }}" alt="AgriNex Logo" style="height: 120px; width: auto; max-width: 80%; filter: drop-shadow(0 8px 20px rgba(27, 77, 44, 0.15));">
-  </div>
-</div>
-
-
 <div class="login-card text-center">
   <div class="brand-section mb-4">
-    <div class="mb-2 d-flex flex-column align-items-center gap-2">
-      <img src="{{ url_for('static', filename='images/logo-agrinex.png') }}" alt="AgriNex Icon" style="height: 60px; width: auto;">
-      <h2 class="fw-bold m-0" style="font-size: 1.95rem; color: var(--primary-green); letter-spacing: 0.5px;">AgriNex</h2>
-    </div>
-    <p class="text-muted small mt-2" style="font-size: 0.88rem; font-weight: 500; color: var(--primary-green); opacity: 0.85;">Where Agriculture Meets AI and GIS</p>
+    <img src="{{ url_for('static', filename='images/logo-agrinex.png') }}" alt="AgriNex" style="height: 60px;">
+    <h2 class="fw-bold mt-2" style="color: var(--primary-green);">AgriNex</h2>
   </div>
 
   {% if error %}
-  <div class="alert-custom mb-4 text-center">
+  <div class="alert-custom mb-3">
     <i class="fas fa-exclamation-circle me-2"></i> {{ error }}
   </div>
   {% endif %}
 
   <form action="/login" method="POST">
-    
     <div class="mb-3 text-start">
-      <label for="role" class="form-label">User Type</label>
-      <div class="input-group">
-        <span class="input-group-text"><i class="fas fa-user-shield"></i></span>
-        <select class="form-select" id="role" name="role" required>
-          <option value="" disabled selected>Choose a role...</option>
-          <option value="admin">👨‍💼 Admin</option>
-          <option value="collector">🌾 Collector</option>
-        </select>
-      </div>
+      <label class="form-label">User Type</label>
+      <select class="form-select" name="role" required>
+        <option value="" disabled selected>Choose a role...</option>
+        <option value="admin">👨‍💼 Admin</option>
+        <option value="collector">🌾 Collector</option>
+      </select>
     </div>
 
     <div class="mb-3 text-start">
-      <label for="username" class="form-label">Username</label>
-      <div class="input-group">
-        <span class="input-group-text"><i class="fas fa-user"></i></span>
-        <input type="text" class="form-control" id="username" name="username" placeholder="Enter username" required autocomplete="off">
-      </div>
+      <label class="form-label">Username</label>
+      <input type="text" class="form-control" name="username" placeholder="Enter username" required>
     </div>
 
     <div class="mb-4 text-start">
-      <label for="password" class="form-label">Password</label>
-      <div class="input-group">
-        <span class="input-group-text"><i class="fas fa-lock"></i></span>
-        <input type="password" class="form-control" id="password" name="password" placeholder="••••••••" required>
-      </div>
+      <label class="form-label">Password</label>
+      <input type="password" class="form-control" name="password" placeholder="••••••••" required>
     </div>
 
-    <button type="submit" class="btn btn-login w-100 fw-bold mt-2">
-      <i class="fas fa-sign-in-alt me-2"></i> Sign In
-    </button>
+    <button type="submit" class="btn btn-login w-100 fw-bold">Sign In</button>
+
+    <div class="mt-3 text-center">
+      <small class="text-muted">Don't have an account? 
+        <a href="/register" class="text-decoration-none fw-bold" style="color: var(--primary-green);">Create account</a>
+      </small>
+    </div>
   </form>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('/sw.js')
-        .then(reg => console.log('Service Worker registered successfully:', reg.scope))
-        .catch(err => console.error('Service Worker registration failed:', err));
-    });
-  }
-
-  // Fade out splash screen after content has loaded
-  window.addEventListener('load', () => {
-    const splash = document.getElementById('pwa-splash');
-    setTimeout(() => {
-      splash.style.opacity = '0';
-      setTimeout(() => {
-        splash.style.display = 'none';
-      }, 400);
-    }, 700); // Snappy 700ms loading view
-  });
-</script>
 </body>
 </html>
