@@ -1,0 +1,2495 @@
+{
+  "features": [
+    {
+      "geometry": {
+        "coordinates": [
+          -0.35781333333333337,
+          35.83913333333333
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "cereal",
+        "date": "2026-05-10 16:42:07.466000",
+        "fid": 1
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -0.35797833333333334,
+          35.838816666666666
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "cereal",
+        "date": "2026-05-10 16:44:00.271000",
+        "fid": 2
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -0.37274,
+          35.84122166666667
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "cereal",
+        "date": "2026-05-10 16:51:26.121000",
+        "fid": 3
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -0.34383460273762884,
+          35.79793079978941
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "cereal",
+        "date": "2026-05-07 16:27:52.405000",
+        "fid": 7
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -0.3410343453641798,
+          35.79943789657811
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "cereal",
+        "date": "2026-05-07 16:29:45.483000",
+        "fid": 8
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -0.34062830000000005,
+          35.79945945243306
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "cereal",
+        "date": "2026-05-07 16:30:28.876000",
+        "fid": 9
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -0.09730844694572323,
+          35.77573143741516
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "not cereal",
+        "date": "2026-05-07 16:59:48.067000",
+        "fid": 10
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -0.07486951292420511,
+          35.74984538639706
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "cereal",
+        "date": "2026-05-07 17:04:32.827000",
+        "fid": 11
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -0.0740518006787282,
+          35.74952081156675
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "cereal",
+        "date": "2026-05-07 17:05:39.812000",
+        "fid": 12
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -0.07241611292420513,
+          35.748836499321264
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "cereal",
+        "date": "2026-05-07 17:07:26.553000",
+        "fid": 13
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -0.009340123812225695,
+          35.67899732584841
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "cereal",
+        "date": "2026-05-07 17:20:00.856000",
+        "fid": 14
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -0.007419799321271826,
+          35.676404752375554
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "cereal",
+        "date": "2026-05-07 17:21:17.265000",
+        "fid": 15
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -0.0065426972850873046,
+          35.67522050203619
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "not cereal",
+        "date": "2026-05-07 17:22:21.896000",
+        "fid": 16
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -0.005059133314420127,
+          35.67324956527138
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "cereal",
+        "date": "2026-05-07 17:23:40.149000",
+        "fid": 17
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.0432717,
+          35.656868602884856
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "cereal",
+        "date": "2026-05-07 17:32:48.037000",
+        "fid": 18
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.058870849679732884,
+          35.6532265886953
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "not cereal",
+        "date": "2026-05-07 17:36:09.373000",
+        "fid": 19
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.06068966081099328,
+          35.633446327784455
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "cereal",
+        "date": "2026-05-07 17:39:07.069000",
+        "fid": 20
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.3058769737343628,
+          35.506382593989336
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "cereal",
+        "date": "2026-05-08 17:03:56.325000",
+        "fid": 21
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.3100688004672737,
+          35.49786844739302
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "cereal",
+        "date": "2026-05-08 17:06:30.478000",
+        "fid": 22
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.28576220730268925,
+          35.44754507763147
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "cereal",
+        "date": "2026-05-08 17:53:32.668000",
+        "fid": 23
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.2841251548024906,
+          35.44693738401327
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "not cereal",
+        "date": "2026-05-08 17:54:47.769000",
+        "fid": 24
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.2762745694078686,
+          35.437522207302685
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "cereal",
+        "date": "2026-05-08 17:57:11.647000",
+        "fid": 25
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.2713924616447211,
+          35.43317416118427
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "cereal",
+        "date": "2026-05-08 17:58:37.684000",
+        "fid": 26
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.2695067,
+          35.4306017
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "not cereal",
+        "date": "2026-05-08 18:00:54.566000",
+        "fid": 27
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -0.41460194059788147,
+          35.76954353647282
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "not cereal",
+        "date": "2026-05-09 10:48:36.720000",
+        "fid": 28
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.1552662622713281,
+          35.8361512118592
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "not cereal",
+        "date": "2026-05-09 09:50:26.628000",
+        "fid": 29
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.15465437599208723,
+          35.83946521539947
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "not cereal",
+        "date": "2026-05-09 09:10:26.937000",
+        "fid": 30
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.16413553965873356,
+          35.820517142367486
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "cereal",
+        "date": "2026-05-09 15:51:29.136000",
+        "fid": 31
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.16432641303644896,
+          35.81966625092272
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "not cereal",
+        "date": "2026-05-09 15:57:25.052000",
+        "fid": 32
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.16348264217015915,
+          35.8181297018729
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "not cereal",
+        "date": "2026-05-09 16:02:28.103000",
+        "fid": 33
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.16315590073624564,
+          35.81952111755836
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "not cereal",
+        "date": "2026-05-09 15:59:08.919000",
+        "fid": 34
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.1471833313750379,
+          35.8349774705761
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "cereal",
+        "date": "2026-05-09 16:29:49.501000",
+        "fid": 35
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -0.4185137757306032,
+          35.77639899015399
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "cereal",
+        "date": "2026-05-08 17:00:30.637000",
+        "fid": 36
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -0.3578039,
+          35.8391439
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "cereal",
+        "date": "2026-05-10 16:40:52.506000",
+        "fid": 37
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -0.3577283,
+          35.8391557
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "cereal",
+        "date": "2026-05-10 16:41:28.567000",
+        "fid": 38
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -0.3578337,
+          35.8390118
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "cereal",
+        "date": "2026-05-10 16:42:16.859000",
+        "fid": 39
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -0.3578626,
+          35.8391301
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "cereal",
+        "date": "2026-05-10 16:42:42.561000",
+        "fid": 40
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -0.3576749,
+          35.8388013
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "cereal",
+        "date": "2026-05-10 16:43:34.743000",
+        "fid": 41
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -0.3770096812195882,
+          35.84835715869828
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "cereal",
+        "date": "2026-05-10 16:55:48.091000",
+        "fid": 42
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -0.3820183333333333,
+          35.84293666666667
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "cereal",
+        "date": "2026-05-10 17:02:41.810000",
+        "fid": 43
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -0.3820383333333333,
+          35.84292833333333
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "not cereal",
+        "date": "2026-05-10 17:03:06.014000",
+        "fid": 44
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -0.3864516666666667,
+          35.837491666666665
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "not cereal",
+        "date": "2026-05-10 17:05:24.267000",
+        "fid": 45
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -0.386535,
+          35.837575
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "not cereal",
+        "date": "2026-05-10 17:06:03.715000",
+        "fid": 46
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -0.38658333333333333,
+          35.83756666666667
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "not cereal",
+        "date": "2026-05-10 17:06:33.700000",
+        "fid": 47
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -0.3864516666666667,
+          35.83750666666666
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "not cereal",
+        "date": "2026-05-10 17:07:27.183000",
+        "fid": 48
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -0.3577139,
+          35.8386591
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "cereal",
+        "date": "2026-05-10 16:44:41.765000",
+        "fid": 49
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -0.3583783,
+          35.8382817
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "cereal",
+        "date": "2026-05-10 16:46:04.405000",
+        "fid": 50
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -0.3614717,
+          35.83691
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "cereal",
+        "date": "2026-05-10 16:47:58.730000",
+        "fid": 51
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -0.37262,
+          35.841315
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "cereal",
+        "date": "2026-05-10 16:51:20.897000",
+        "fid": 52
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -0.3724832695782953,
+          35.84147561014057
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "cereal",
+        "date": "2026-05-10 16:51:54.943000",
+        "fid": 53
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -0.3819213,
+          35.8472351
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "cereal",
+        "date": "2026-05-10 16:58:38.256000",
+        "fid": 54
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -0.3819795,
+          35.8429255
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "cereal",
+        "date": "None",
+        "fid": 55
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -0.3820468,
+          35.842941
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "cereal",
+        "date": "2026-05-10 17:01:16.946000",
+        "fid": 56
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -0.381789,
+          35.8429829
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "cereal",
+        "date": "2026-05-10 17:02:14.919000",
+        "fid": 57
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -0.3862333,
+          35.8373333
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "cereal",
+        "date": "2026-05-10 17:05:39.051000",
+        "fid": 58
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -0.38822,
+          35.83571
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "cereal",
+        "date": "2026-05-10 17:11:41.196000",
+        "fid": 59
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -0.3881704,
+          35.8356287
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "cereal",
+        "date": "2026-05-10 17:12:09.745000",
+        "fid": 60
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -0.3840155569824228,
+          35.82854413027579
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "cereal",
+        "date": "2026-05-10 17:18:42.198000",
+        "fid": 61
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -0.3834233000000001,
+          35.828560526243756
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "cereal",
+        "date": "2026-05-10 17:19:40.189000",
+        "fid": 62
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -0.3801216404621708,
+          35.8283028428908
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "cereal",
+        "date": "2026-05-10 17:20:43.331000",
+        "fid": 63
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.8365008052034939,
+          35.979243028959694
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "Cereal",
+        "date": "2026-04-16 15:48:27.010000",
+        "fid": 64
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.8345754103728333,
+          35.980938045128944
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "Cereal",
+        "date": "2026-04-16 16:50:52.317000",
+        "fid": 65
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.8338690252770659,
+          35.97816699663457
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": null,
+        "date": "2026-04-16 15:52:18.216000",
+        "fid": 66
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.8366779948912313,
+          35.977063998353174
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "Not defined",
+        "date": "2026-04-16 15:53:44.939000",
+        "fid": 67
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.8311222524600926,
+          35.97879614812778
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "Not defined",
+        "date": "2026-04-16 15:54:59.522000",
+        "fid": 68
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.827469314075546,
+          35.97688615543847
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "Cereal",
+        "date": "2026-04-16 15:56:49.233000",
+        "fid": 69
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.8271523047858135,
+          35.973968277069545
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "Not defined",
+        "date": "2026-04-16 15:58:02.487000",
+        "fid": 70
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.8253007918583614,
+          35.970075746876766
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "Not defined",
+        "date": "2026-04-16 15:58:41.184000",
+        "fid": 71
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.8268891728534872,
+          35.97198120377361
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "Cereal",
+        "date": "2026-06-13 16:00:07.747000",
+        "fid": 72
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.8251930237511712,
+          35.9674809229393
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "Cereal",
+        "date": "2026-04-16 16:01:28.819000",
+        "fid": 73
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.8291053135424978,
+          35.96915639874467
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "Not defined",
+        "date": "2026-04-16 16:02:16.732000",
+        "fid": 74
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.8233727558314375,
+          35.96728024154284
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "Not defined",
+        "date": "2026-04-16 16:04:57.678000",
+        "fid": 75
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.8241389957211523,
+          35.969418754740104
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "Cereal",
+        "date": "2026-04-16 16:07:00.350000",
+        "fid": 76
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.8227410635926037,
+          35.9689404453915
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "Cereal",
+        "date": "2026-04-16 16:11:19.986000",
+        "fid": 77
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.8207360192475964,
+          35.96902303412368
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "Cereal",
+        "date": "2026-04-16 16:12:14.543000",
+        "fid": 78
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.8207711825709768,
+          35.97064295815605
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "Cereal",
+        "date": "2026-04-16 16:12:59.769000",
+        "fid": 79
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.8164707259973025,
+          35.97250091254661
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "Cereal",
+        "date": "2026-04-16 16:15:47.036000",
+        "fid": 80
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.8154602826019536,
+          35.97391477886989
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "Cereal",
+        "date": "2026-04-16 16:16:34.263000",
+        "fid": 81
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.8139706701025271,
+          35.97264631828351
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "Cereal",
+        "date": "2026-04-16 16:17:22.896000",
+        "fid": 82
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.8133591147726595,
+          35.9737824235316
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "Cereal",
+        "date": "2026-04-16 16:18:12.757000",
+        "fid": 83
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.8197404324080523,
+          35.980635747208574
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "Cereal",
+        "date": "2026-04-16 16:42:00.993000",
+        "fid": 84
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.8198088032799833,
+          35.979373900354915
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "Cereal",
+        "date": "2026-04-16 16:51:49.737000",
+        "fid": 85
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.8205523039822729,
+          35.980086857270315
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "Not defined",
+        "date": "2026-04-16 16:52:29.878000",
+        "fid": 86
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.8062739081346982,
+          35.977475258262224
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "Cereal",
+        "date": "2026-04-16 16:54:23.574000",
+        "fid": 87
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.8049189524269381,
+          35.97736591722418
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "Cereal",
+        "date": "2026-04-16 16:55:20.969000",
+        "fid": 88
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.8001123830564156,
+          35.97442130181605
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "Cereal",
+        "date": "2026-04-16 16:59:11.052000",
+        "fid": 89
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.7999945276683076,
+          35.97280735694656
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "Cereal",
+        "date": "2026-04-16 17:01:47.990000",
+        "fid": 90
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.799295410740516,
+          35.974301632706585
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "Cereal",
+        "date": "2026-04-16 17:02:35.794000",
+        "fid": 91
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.8002319468240594,
+          35.97159624369206
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "Cereal",
+        "date": "2026-04-16 17:07:06.606000",
+        "fid": 92
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.8010688460918219,
+          35.971919094858606
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "Cereal",
+        "date": "2026-04-16 17:07:19.873000",
+        "fid": 93
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.7976614448665827,
+          35.98479940236507
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "Cereal",
+        "date": "2026-04-16 17:10:30.426000",
+        "fid": 94
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.8032110758132069,
+          35.98847605423605
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "Cereal",
+        "date": "2026-04-16 17:11:49.840000",
+        "fid": 95
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.8021625410599673,
+          35.98723287160893
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "Cereal",
+        "date": "2026-04-16 17:12:34.744000",
+        "fid": 96
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.8116402176672853,
+          35.99058636088402
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "Cereal",
+        "date": "2026-04-17 15:14:15.749000",
+        "fid": 97
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.8130381605598742,
+          35.9973995782926
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "Cereal",
+        "date": "2026-04-17 15:15:10.160000",
+        "fid": 98
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.8138794518476021,
+          35.99879981037167
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "Cereal",
+        "date": "2026-04-17 15:15:43.387000",
+        "fid": 99
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.8197428712220883,
+          35.9995268635841
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "Cereal",
+        "date": "2026-04-17 15:16:22.555000",
+        "fid": 100
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.8169878112326932,
+          35.996326141265435
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "Cereal",
+        "date": "2026-04-17 15:17:29.618000",
+        "fid": 101
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.8249737528232773,
+          35.999579977319364
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "Cereal",
+        "date": "2026-04-17 15:18:43.415000",
+        "fid": 102
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.8243699731491988,
+          35.99644220832457
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "Cereal",
+        "date": "2026-04-17 15:19:27.594000",
+        "fid": 103
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.8121546104704185,
+          36.00312644837641
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "Cereal",
+        "date": "2026-06-13 15:20:59.708000",
+        "fid": 104
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.8130973889327666,
+          36.00826429911387
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "Cereal",
+        "date": "2026-04-17 15:21:50.753000",
+        "fid": 105
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.8119856017740419,
+          36.007941805352324
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "Cereal",
+        "date": "2026-06-13 15:22:24.483000",
+        "fid": 106
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.7938860228334008,
+          36.01007994914034
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "Cereal",
+        "date": "None",
+        "fid": 107
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.7956710148418475,
+          36.00813382160141
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "Cereal",
+        "date": "None",
+        "fid": 108
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.8034015526316364,
+          36.01487275939354
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "Cereal",
+        "date": "None",
+        "fid": 109
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.8058048509877987,
+          36.01490497656572
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "Cereal",
+        "date": "None",
+        "fid": 110
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.7979043988939285,
+          36.018914590228114
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "Cereal",
+        "date": "None",
+        "fid": 111
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.7949682283129538,
+          36.020218325239426
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "Cereal",
+        "date": "None",
+        "fid": 112
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.784137946921143,
+          36.01954579926622
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "Cereal",
+        "date": "None",
+        "fid": 113
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.7720995345953606,
+          36.01701643569002
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "Cereal",
+        "date": "None",
+        "fid": 114
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.7684637075381648,
+          36.0172584023058
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "Cereal",
+        "date": "None",
+        "fid": 115
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.804665500936906,
+          36.02814722653436
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "Cereal",
+        "date": "None",
+        "fid": 116
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.8011586167960552,
+          36.009910246840754
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "Cereal",
+        "date": "None",
+        "fid": 117
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.79964096526577,
+          36.00788229283178
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "Cereal",
+        "date": "None",
+        "fid": 118
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.7947767647503042,
+          35.98622563869839
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "Cereal",
+        "date": "None",
+        "fid": 119
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.7957959079312819,
+          35.99143009682734
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "Cereal",
+        "date": "None",
+        "fid": 120
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.7934492456754856,
+          35.997408784693654
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "Cereal",
+        "date": "None",
+        "fid": 121
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.7857614248290681,
+          35.99760022737701
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "Cereal",
+        "date": "None",
+        "fid": 122
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.8019945634695925,
+          36.002091498538974
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "Cereal",
+        "date": "None",
+        "fid": 123
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.7954156725253069,
+          36.00409303567876
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "Cereal",
+        "date": "None",
+        "fid": 124
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.8350549904950089,
+          35.96620339224829
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "Cereal",
+        "date": "None",
+        "fid": 125
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.8349601713648918,
+          35.96501127084579
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "Cereal",
+        "date": "None",
+        "fid": 126
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.8301521402993849,
+          35.965223604340956
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "Cereal",
+        "date": "None",
+        "fid": 127
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.8341961843111758,
+          35.95841486005627
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "Cereal",
+        "date": "None",
+        "fid": 128
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.8349397334529823,
+          35.95516020149755
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "Cereal",
+        "date": "None",
+        "fid": 129
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.8273668081856943,
+          35.96104885056331
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "Cereal",
+        "date": "None",
+        "fid": 130
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.8263026869990348,
+          35.964673024897486
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "Cereal",
+        "date": "None",
+        "fid": 131
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.824260334400594,
+          35.95291952939631
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "Cereal",
+        "date": "None",
+        "fid": 132
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.8269487520380895,
+          35.94583478884695
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "Cereal",
+        "date": "None",
+        "fid": 133
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.8360446696061541,
+          35.94731579596664
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "Cereal",
+        "date": "None",
+        "fid": 134
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.8450051008351696,
+          35.95003490357182
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "Cereal",
+        "date": "None",
+        "fid": 135
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.8481639391417617,
+          35.94777436175577
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "Cereal",
+        "date": "None",
+        "fid": 136
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.821221484461709,
+          35.94323449868311
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "Cereal",
+        "date": "None",
+        "fid": 137
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.8290519839163516,
+          35.93700293025913
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "Cereal",
+        "date": "None",
+        "fid": 138
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.7868208462468428,
+          35.981545223304494
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "Cereal",
+        "date": "None",
+        "fid": 139
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.7875180472083959,
+          35.981657486601485
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "Cereal",
+        "date": "None",
+        "fid": 140
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.7729969968537328,
+          35.99028481442498
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "Cereal",
+        "date": "None",
+        "fid": 141
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.7652354800418355,
+          35.99182046665862
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "Cereal",
+        "date": "None",
+        "fid": 142
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.7511256017261799,
+          35.99638654210537
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "Cereal",
+        "date": "None",
+        "fid": 143
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.7451293207864897,
+          35.99759134385189
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "Cereal",
+        "date": "None",
+        "fid": 144
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.7306307924870453,
+          36.00377274012125
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "Cereal",
+        "date": "None",
+        "fid": 145
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.7322401978035129,
+          35.98873705992483
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "Cereal",
+        "date": "None",
+        "fid": 146
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.7331993455835448,
+          35.98918196452487
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "Cereal",
+        "date": "None",
+        "fid": 147
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.7343555304142586,
+          35.98903181549836
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "Cereal",
+        "date": "None",
+        "fid": 148
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.7404305049425175,
+          35.98937243732452
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "Cereal",
+        "date": "None",
+        "fid": 149
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.7397347415517762,
+          35.99197200764795
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "Cereal",
+        "date": "None",
+        "fid": 150
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.7387911630005564,
+          35.992354780458456
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "Cereal",
+        "date": "None",
+        "fid": 151
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.7414452418070586,
+          35.98482391784081
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "Cereal",
+        "date": "None",
+        "fid": 152
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.741584073267319,
+          35.9826418422952
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "Cereal",
+        "date": "None",
+        "fid": 153
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.7437414676281999,
+          35.98161775372608
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "Cereal",
+        "date": "None",
+        "fid": 154
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.7457302030907746,
+          35.98194238522364
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "Cereal",
+        "date": "None",
+        "fid": 155
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.7537431111378223,
+          35.98170497246334
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "Cereal",
+        "date": "None",
+        "fid": 156
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.7596089349910694,
+          35.98549669180526
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "Cereal",
+        "date": "None",
+        "fid": 157
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.7564577304800938,
+          35.971853922337196
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "Cereal",
+        "date": "None",
+        "fid": 158
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.782573578468873,
+          35.96335449012917
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "Cereal",
+        "date": "None",
+        "fid": 159
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.7814951346706283,
+          35.97425932726923
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "Cereal",
+        "date": "None",
+        "fid": 160
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.7891864552346184,
+          35.96892017776667
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "Cereal",
+        "date": "None",
+        "fid": 161
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.7936395246349347,
+          35.96985665127735
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "Cereal",
+        "date": "None",
+        "fid": 162
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.8101285600048641,
+          35.96303412348209
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "Cereal",
+        "date": "None",
+        "fid": 163
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.7955002951178615,
+          35.9594518945488
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "Cereal",
+        "date": "None",
+        "fid": 164
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.7932816227338835,
+          35.956676794482604
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "Cereal",
+        "date": "None",
+        "fid": 165
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.8067893644589281,
+          35.956868184139005
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "Cereal",
+        "date": "None",
+        "fid": 166
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.8045880205129865,
+          35.95311401622478
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "Cereal",
+        "date": "None",
+        "fid": 167
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.8032192834194521,
+          35.95287515680776
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "Cereal",
+        "date": "None",
+        "fid": 168
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0.8101115918517141,
+          35.94731900285826
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "classe": "Cereal",
+        "date": "None",
+        "fid": 169
+      },
+      "type": "Feature"
+    }
+  ],
+  "type": "FeatureCollection"
+}

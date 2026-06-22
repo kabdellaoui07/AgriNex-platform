@@ -310,6 +310,25 @@ def get_predictions_geojson():
             }
         })
     return jsonify({"type": "FeatureCollection", "features": features})
+@app.route('/get_survey_geojson')
+@admin_required
+def get_survey_geojson():
+    survey_points = Survey.query.all()
+    features = []
+    for s in survey_points:
+        features.append({
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [s.longitude, s.latitude] # التأكد من الترتيب [lon, lat]
+            },
+            "properties": {
+                "fid": s.fid,
+                "classe": s.classe,
+                "date": str(s.Date)
+            }
+        })
+    return jsonify({"type": "FeatureCollection", "features": features})
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
