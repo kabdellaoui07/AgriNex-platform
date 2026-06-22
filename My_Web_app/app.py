@@ -7,6 +7,7 @@ from datetime import datetime, timezone
 from functools import wraps
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
+from geoalchemy2 import WKTElement # إضافة هذا السطر
 
 os.environ['PGCLIENTENCODING'] = 'utf-8'
 import numpy as np
@@ -52,63 +53,66 @@ class User(db.Model):
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
+from geoalchemy2 import Geometry # لا تنسَ استيرادها
+
 class Prediction(db.Model):
     __tablename__ = 'predictions'
     id              = db.Column(db.Integer, primary_key=True)
+    user_id         = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False) 
     image_path      = db.Column(db.String(255))
     predicted_class = db.Column(db.String(100))
     confidence      = db.Column(db.Float)
     latitude        = db.Column(db.Float)
     longitude       = db.Column(db.Float)
-    timestamp       = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+    geom            = db.Column(Geometry('POINT', srid=4326))
+    timestamp       = db.Column(db.DateTime, default=datetime.utcnow)
     notes           = db.Column(db.Text)
 
+    # --- هذه هي الدالة الموحدة والصحيحة ---
     def to_dict(self):
         return {
             'id': self.id,
+            'user_id': self.user_id,
             'image_path': self.image_path,
             'predicted_class': self.predicted_class,
-            'confidence': round(self.confidence * 100, 1) if self.confidence <= 1.0 else round(self.confidence, 1),
+            'confidence': self.confidence,
             'latitude': self.latitude,
             'longitude': self.longitude,
-            'timestamp': self.timestamp.strftime('%d/%m/%Y %H:%M') if self.timestamp else '—',
+            'timestamp': self.timestamp.strftime('%Y-%m-%d %H:%M:%S') if self.timestamp else None,
             'notes': self.notes
         }
-
 class Survey(db.Model):
     __tablename__ = 'Survey'
     __table_args__ = {'schema': 'public', 'extend_existing': True}
     
-    fid            = db.Column(db.BigInteger, primary_key=True)
-    geom           = db.Column(NullType)
-    Date           = db.Column(db.DateTime)
-    classe         = db.Column(db.String(100))
-    Photo          = db.Column(db.String(255))
+    fid      = db.Column(db.BigInteger, primary_key=True)
+    geom     = db.Column(NullType)
+    Date     = db.Column(db.DateTime)
+    classe   = db.Column(db.String(100))
+    Photo    = db.Column(db.String(255))
     
-    latitude       = column_property(func.ST_Y(geom))
-    longitude      = column_property(func.ST_X(geom))
+    # هذه الخصائص تستخدم للدالة أدناه
+    latitude  = column_property(func.ST_Y(geom))
+    longitude = column_property(func.ST_X(geom))
 
     def to_dict(self):
         return {
-            'id': self.fid,
+            'fid': self.fid,
+            'classe': self.classe,
             'latitude': self.latitude,
             'longitude': self.longitude,
-            'class_label': self.classe,
-            'image_name': os.path.basename(self.Photo) if self.Photo else None,
-            'acquisition_date': self.Date.strftime('%Y-%m-%d') if self.Date else None,
-            'source': 'Mergin Map / QGIS',
-            'notes': ''
+            'date': self.Date.strftime('%Y-%m-%d') if self.Date else None
         }
-
 # ─────────────────────────────────────────────────────────────────────────
 #  🎯 GLOBAL ROUTE GUARD & ROLE SECURITY
 # ─────────────────────────────────────────────────────────────────────────
 @app.before_request
 def require_login():
-    allowed_routes = ['login', 'static', 'serve_sw', 'serve_manifest', 'serve_favicon']
+    allowed_routes = ['login', 'register', 'static', 'serve_sw', 'serve_manifest', 'serve_favicon']
     if request.endpoint not in allowed_routes and not session.get('logged_in'):
         return redirect(url_for('login'))
 
+# تأكد أن هذا الجزء معرف هنا قبل استخدامه في الـ routes
 def admin_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
@@ -165,20 +169,20 @@ def predict_image(img_path):
 # ─────────────────────────────────────────────────────────────────────────
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    if session.get('logged_in'):
-        return redirect(url_for('index'))
     if request.method == 'POST':
-        role = request.form.get('role')
         username = request.form.get('username')
         password = request.form.get('password')
+        role = request.form.get('role')
+        
         user = User.query.filter_by(username=username).first()
+        
         if user and user.check_password(password) and user.role == role:
             session['logged_in'] = True
+            session['user_id'] = user.id  # <--- هنا نحفظ الهوية
             session['username'] = user.username
             session['role'] = user.role
             return redirect(url_for('index'))
-        else:
-            return render_template('login.html', error="Invalid credentials.")
+        return "Invalid credentials"
     return render_template('login.html')
 
 @app.route('/logout')
@@ -192,34 +196,57 @@ def index():
 
 @app.route('/upload', methods=['POST'])
 def upload():
-    if 'image' not in request.files:
-        return jsonify({'error': 'No image provided'}), 400
-    file = request.files['image']
-    lat = request.form.get('latitude', type=float)
-    lon = request.form.get('longitude', type=float)
+    # استلام البيانات
+    file = request.files.get('image')
+    lat = request.form.get('latitude')
+    lon = request.form.get('longitude')
     notes = request.form.get('notes', '')
-    captured_at_str = request.form.get('captured_at')
-    
-    if captured_at_str:
-        try:
-            timestamp_val = datetime.fromisoformat(captured_at_str.replace('Z', '+00:00'))
-        except ValueError:
-            timestamp_val = datetime.now(timezone.utc)
-    else:
-        timestamp_val = datetime.now(timezone.utc)
 
+    if not lat or not lon or lat == 'null' or lon == 'null':
+        return jsonify({'success': False, 'message': 'Coordinates not captured'}), 400
+
+    lat, lon = float(lat), float(lon)
     filename = f"{datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')}_{file.filename}"
     save_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
     file.save(save_path)
-    predicted_class, confidence, img_base64 = predict_image(save_path)
 
-    pred = Prediction(image_path=filename, predicted_class=predicted_class, confidence=confidence, 
-                      latitude=lat, longitude=lon, timestamp=timestamp_val, notes=notes)
-    db.session.add(pred)
+    predicted_class, confidence, _ = predict_image(save_path)
+
+    prediction = Prediction(
+        user_id=session.get('user_id'),
+        image_path=filename,
+        predicted_class=predicted_class,
+        confidence=confidence,
+        latitude=lat,
+        longitude=lon,
+        geom=WKTElement(f'POINT({lon} {lat})', srid=4326),
+        timestamp=datetime.now(timezone.utc),
+        notes=notes
+    )
+    
+    db.session.add(prediction)
     db.session.commit()
-    response_data = pred.to_dict()
-    response_data['image_base64'] = img_base64
-    return jsonify({'success': True, 'prediction': response_data})
+    
+    # --- كود إنشاء ملف الـ GeoJSON مرة واحدة فقط ---
+    predictions = Prediction.query.all()
+    features = []
+    for p in predictions:
+        features.append({
+            "type": "Feature",
+            "geometry": {"type": "Point", "coordinates": [p.longitude, p.latitude]},
+            "properties": {"id": p.id, "class": p.predicted_class, "confidence": p.confidence}
+        })
+    
+    geojson_path = os.path.join(app.root_path, 'static', 'predictions.geojson')
+    with open(geojson_path, 'w') as f:
+        json.dump({"type": "FeatureCollection", "features": features}, f)
+    # -----------------------------------------------
+    
+    return jsonify({
+        'success': True, 
+        'class': predicted_class, 
+        'confidence': round(confidence * 100, 2)
+    })
 
 @app.route('/results')
 @admin_required
@@ -261,6 +288,29 @@ def statistics():
 @admin_required
 def sampling():
     return render_template('sampling.html')
+@app.route('/get_predictions_geojson')
+ # @admin_required
+def get_predictions_geojson():
+    # استعلام لجلب البيانات بتنسيق GeoJSON
+    predictions = Prediction.query.all()
+    features = []
+    for p in predictions:
+        features.append({
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [p.longitude, p.latitude]
+            },
+            "properties": {
+                "id": p.id,
+                "user_id": p.user_id,
+                "class": p.predicted_class,
+                "confidence": p.confidence,
+                "notes": p.notes
+            }
+        })
+    return jsonify({"type": "FeatureCollection", "features": features})
+
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':

@@ -254,37 +254,42 @@ function syncFieldsToMap() {
 }
 
 async function submitForm() {
-  const file = imageInput.files[0]; 
-  if (!file) { alert('Please select or capture an image first'); return; }
+    const file = imageInput.files[0]; 
+    if (!file) { alert('Please select or capture an image first'); return; }
 
-  const lat = document.getElementById('lat').value;
-  const lon = document.getElementById('lon').value;
-  const notes = document.getElementById('notes').value;
-  const capturedAt = document.getElementById('captured_at').value || new Date().toISOString();
+    const lat = document.getElementById('lat').value;
+    const lon = document.getElementById('lon').value;
+    const notes = document.getElementById('notes').value;
 
-  const btn = document.getElementById('submit-btn'); 
-  btn.disabled = true; btn.innerText = 'Analysis in progress…';
-  
-  const fd = new FormData();
-  fd.append('image', file); fd.append('latitude', lat);
-  fd.append('longitude', lon); fd.append('notes', notes);
-  fd.append('captured_at', capturedAt);
+    const btn = document.getElementById('submit-btn'); 
+    btn.disabled = true; 
+    btn.innerText = 'Analysis in progress…';
+    
+    const fd = new FormData();
+    fd.append('image', file); 
+    fd.append('latitude', lat);
+    fd.append('longitude', lon);
+    fd.append('notes', notes);
 
-  try {
-    const res = await fetch('/upload', { method:'POST', body:fd }); 
-    const data = await res.json();
-    if (data.success) { 
-      displayResult(data.prediction); 
-      showToast("Diagnostic analysis completed successfully.", "success");
-    } else { 
-      alert(data.error || "Analysis failed on the server."); 
+    try {
+        const res = await fetch('/upload', { method:'POST', body:fd }); 
+        const data = await res.json();
+        
+        if (res.ok && data.success) {
+            // هنا السحر: بدلاً من alert، نستدعي دالة تحديث العرض
+            displayResult({
+                predicted_class: data.class,
+                confidence: data.confidence
+            });
+        } else {
+            alert("Analysis failed: " + data.message);
+        }
+    } catch(e) {
+        alert("Connection Error. Please try again.");
+    } finally { 
+        btn.disabled = false; 
+        btn.innerText = "Run AI Analysis"; 
     }
-  } catch(e) {
-    alert("Connection Error: Unable to connect to the server. Please check your network connection and try again.");
-    console.error("Transmission failed:", e);
-  } finally { 
-    btn.disabled = false; btn.innerText = "Run AI Analysis"; 
-  }
 }
 
 function displayResult(p) {
