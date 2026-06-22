@@ -4,7 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login - AgriNex</title>
-  <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='images/Design sans titre.svg') }}">
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/logo-agrinex.png') }}">
+  <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
   <link rel="manifest" href="/manifest.json">
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -161,15 +162,22 @@
       border-radius: 12px;
       font-size: 0.88rem;
       padding: 12px;
-    }
   </style>
 </head>
 <body>
 
+<!-- Splash Screen Overlay (Plain white with centered green leaf pin) -->
+<div id="pwa-splash" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: #ffffff; z-index: 99999; display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 1; transition: opacity 0.4s cubic-bezier(0.25, 1, 0.5, 1); pointer-events: none;">
+  <div style="text-align: center;">
+    <img src="{{ url_for('static', filename='images/logo-agrinex.png') }}" alt="AgriNex Logo" style="height: 120px; width: auto; max-width: 80%; filter: drop-shadow(0 8px 20px rgba(27, 77, 44, 0.15));">
+  </div>
+</div>
+
+
 <div class="login-card text-center">
   <div class="brand-section mb-4">
     <div class="mb-2 d-flex flex-column align-items-center gap-2">
-      <img src="{{ url_for('static', filename='images/Design sans titre.svg') }}" alt="AgriNex Icon" style="height: 60px; width: auto;">
+      <img src="{{ url_for('static', filename='images/logo-agrinex.png') }}" alt="AgriNex Icon" style="height: 60px; width: auto;">
       <h2 class="fw-bold m-0" style="font-size: 1.95rem; color: var(--primary-green); letter-spacing: 0.5px;">AgriNex</h2>
     </div>
     <p class="text-muted small mt-2" style="font-size: 0.88rem; font-weight: 500; color: var(--primary-green); opacity: 0.85;">Where Agriculture Meets AI and GIS</p>
@@ -226,6 +234,17 @@
         .catch(err => console.error('Service Worker registration failed:', err));
     });
   }
+
+  // Fade out splash screen after content has loaded
+  window.addEventListener('load', () => {
+    const splash = document.getElementById('pwa-splash');
+    setTimeout(() => {
+      splash.style.opacity = '0';
+      setTimeout(() => {
+        splash.style.display = 'none';
+      }, 400);
+    }, 700); // Snappy 700ms loading view
+  });
 </script>
 </body>
 </html>

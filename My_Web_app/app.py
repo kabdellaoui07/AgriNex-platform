@@ -108,7 +108,7 @@ class Survey(db.Model):
 # ─────────────────────────────────────────────────────────────────────────
 @app.before_request
 def require_login():
-    allowed_routes = ['login', 'static', 'serve_sw', 'serve_manifest']
+    allowed_routes = ['login', 'static', 'serve_sw', 'serve_manifest', 'serve_favicon']
     if request.endpoint not in allowed_routes and not session.get('logged_in'):
         return redirect(url_for('login'))
 
@@ -203,6 +203,10 @@ def serve_sw():
 @app.route('/manifest.json')
 def serve_manifest():
     return app.send_static_file('manifest.json')
+
+@app.route('/favicon.ico')
+def serve_favicon():
+    return app.send_static_file('favicon.ico')
 
 @app.route('/')
 def index():

@@ -1,7 +1,7 @@
-const CACHE_NAME = 'agrinex-v3';
+const CACHE_NAME = 'agrinex-v7';
 const ASSETS = [
   '/static/css/main.css',
-  '/static/images/Design%20sans%20titre.svg',
+  '/static/images/logo-agrinex.png',
   '/static/favicon.ico',
   '/static/manifest.json'
 ];

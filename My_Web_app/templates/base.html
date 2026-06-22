@@ -4,7 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{% block title %}AgriNex — Agricultural Monitoring System{% endblock %}</title>
-  <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='images/Design sans titre.svg') }}">
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/logo-agrinex.png') }}">
+  <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
   <link rel="manifest" href="/manifest.json">
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -15,17 +16,17 @@
        AGRINEX PREMIUM DESIGN SYSTEM (Outfit Font & Cream-Forest Theme)
        ───────────────────────────────────────────────────────────────────────── */
     :root {
-      --bg-cream: #f6f5f0;           /* Soft light cream background */
-      --surface-white: #ffffff;      /* Clean white surfaces */
-      --primary-green: #1b4d2c;      /* Deep agricultural green */
-      --leaf-green: #2ecc71;         /* Natural leaf green */
-      --wheat-gold: #e5a93b;         /* Wheat gold */
-      --earth-brown: #8c6239;        /* Soft earth brown */
-      --text-dark: #1b261e;          /* Clean dark text */
-      --text-muted: #627267;         /* Sage-charcoal muted text */
-      --border-color: rgba(27, 77, 44, 0.08); /* Soft organic borders */
-      --accent-green: #2ecc71;       /* Crop Green badge color */
-      --accent-gold: #e5a93b;        /* Cereal Gold badge color */
+      --bg-cream: #f6f5f0;
+      --surface-white: #ffffff;
+      --primary-green: #1b4d2c;
+      --leaf-green: #2ecc71;
+      --wheat-gold: #e5a93b;
+      --earth-brown: #8c6239;
+      --text-dark: #1b261e;
+      --text-muted: #627267;
+      --border-color: rgba(27, 77, 44, 0.08);
+      --accent-green: #2ecc71;
+      --accent-gold: #e5a93b;
       --font-family: 'Outfit', 'Segoe UI', -apple-system, sans-serif;
       --card-shadow: 0 10px 30px rgba(27, 77, 44, 0.04), 0 2px 8px rgba(0, 0, 0, 0.02);
       --hover-shadow: 0 16px 40px rgba(27, 77, 44, 0.08), 0 4px 12px rgba(0, 0, 0, 0.03);
@@ -40,7 +41,6 @@
       -webkit-font-smoothing: antialiased;
     }
 
-    /* Ambient natural background gradient glow (subtle green leaf light) */
     body::before {
       content: "";
       position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
@@ -49,13 +49,11 @@
       pointer-events: none;
     }
 
-    /* Scrollbar */
     ::-webkit-scrollbar { width: 8px; height: 8px; }
     ::-webkit-scrollbar-track { background: var(--bg-cream); }
     ::-webkit-scrollbar-thumb { background: rgba(27, 77, 44, 0.15); border-radius: 4px; }
     ::-webkit-scrollbar-thumb:hover { background: var(--primary-green); }
 
-    /* Light Theme Leaflet Popups */
     .leaflet-popup-content-wrapper {
       background: var(--surface-white) !important;
       border: 1px solid var(--border-color);
@@ -67,14 +65,81 @@
       background: var(--surface-white) !important;
       border: 1px solid var(--border-color);
     }
-    .leaflet-popup-close-button {
-      color: var(--text-muted) !important;
-    }
+    .leaflet-popup-close-button { color: var(--text-muted) !important; }
     .leaflet-popup-content {
       margin: 14px 18px !important;
       font-family: var(--font-family) !important;
       font-size: 0.88rem !important;
       color: var(--text-dark) !important;
+    }
+
+    /* ═══════════════════════════════════════════════
+       SPLASH SCREEN
+       ═══════════════════════════════════════════════ */
+    #splash-screen {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: #ffffff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 99999;
+      font-family: 'Outfit', sans-serif;
+      transition: opacity 0.6s ease;
+    }
+
+    #splash-screen .splash-logo {
+      width: 110px;
+      height: 110px;
+      object-fit: contain;
+      margin-bottom: 24px;
+      animation: splashPulse 1.8s ease-in-out infinite;
+    }
+
+    #splash-screen .splash-name {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #1b4d2c;
+      margin: 0 0 8px 0;
+      letter-spacing: 1px;
+    }
+
+    #splash-screen .splash-slogan {
+      font-size: 0.85rem;
+      font-weight: 400;
+      color: #627267;
+      margin: 0;
+      letter-spacing: 0.5px;
+      text-align: center;
+    }
+
+    #splash-screen .splash-bar-wrap {
+      margin-top: 40px;
+      width: 120px;
+      height: 3px;
+      background: rgba(27, 77, 44, 0.1);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+
+    #splash-screen .splash-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #1b4d2c, #2ecc71);
+      border-radius: 99px;
+      animation: splashLoad 2s ease forwards;
+    }
+
+    @keyframes splashPulse {
+      0%, 100% { transform: scale(1);   opacity: 1; }
+      50%       { transform: scale(1.06); opacity: 0.85; }
+    }
+
+    @keyframes splashLoad {
+      0%   { width: 0%; }
+      100% { width: 100%; }
     }
 
     /* MOBILE TOP BAR */
@@ -98,7 +163,6 @@
     }
     .mobile-brand i { color: var(--leaf-green); margin-right: 6px; }
     .mobile-brand span { color: #fff; font-weight: 300; }
-    
     .menu-toggle {
       background: none;
       border: none;
@@ -108,7 +172,7 @@
       padding: 0;
     }
 
-    /* SIDEBAR (Deep Forest Green) */
+    /* SIDEBAR */
     .sidebar {
       position: fixed; top: 0; left: 0; height: 100vh; width: 260px;
       background: var(--primary-green);
@@ -117,7 +181,6 @@
       border-right: 1px solid rgba(27, 77, 44, 0.1);
       transition: transform 0.3s ease;
     }
-    
     .sidebar-brand {
       padding: 28px 24px; font-size: 1.35rem; font-weight: 700;
       letter-spacing: 0.5px;
@@ -129,15 +192,8 @@
       font-size: 1.5rem;
       filter: drop-shadow(0 0 6px rgba(46, 204, 113, 0.4));
     }
-    .sidebar-brand span { 
-      color: #fff; 
-      font-weight: 300;
-      opacity: 0.95;
-    }
-
+    .sidebar-brand span { color: #fff; font-weight: 300; opacity: 0.95; }
     .sidebar nav { flex: 1; padding: 12px 14px; }
-    
-    /* Curved glassmorphism navigation links */
     .sidebar nav a {
       display: flex; align-items: center; gap: 14px;
       color: rgba(255, 255, 255, 0.65); text-decoration: none;
@@ -145,13 +201,11 @@
       font-size: 0.98rem; font-weight: 500;
       border-radius: 12px; margin-bottom: 8px;
     }
-    
     .sidebar nav a:hover {
       color: #fff; 
       background: rgba(255, 255, 255, 0.08);
       padding-left: 22px;
     }
-    
     .sidebar nav a.active {
       color: var(--primary-green) !important; 
       background: var(--surface-white) !important;
@@ -160,7 +214,6 @@
     }
     .sidebar nav a i { width: 22px; text-align: center; font-size: 1.15rem; }
     .sidebar nav a.active i { color: var(--primary-green); }
-    
     .sidebar-footer {
       padding: 20px 24px; font-size: 0.78rem; 
       color: rgba(255, 255, 255, 0.4);
@@ -168,10 +221,8 @@
       font-family: monospace;
     }
 
-    /* MAIN CONTENT AREA */
     .main-content { margin-left: 260px; min-height: 100vh; padding: 35px; transition: all 0.3s ease; }
 
-    /* PAGE HEADER (Light Cream panel) */
     .page-header {
       background: linear-gradient(135deg, rgba(27, 77, 44, 0.04) 0%, rgba(27, 77, 44, 0.01) 100%);
       border: 1px solid var(--border-color);
@@ -181,7 +232,6 @@
     .page-header h1 { font-size: 1.85rem; font-weight: 700; margin: 0; color: var(--primary-green); }
     .page-header p  { margin: 8px 0 0; color: var(--text-muted); font-size: 0.98rem; }
 
-    /* CARDS */
     .card {
       background: var(--surface-white) !important;
       border: 1px solid var(--border-color) !important; 
@@ -203,8 +253,7 @@
       font-weight: 700; font-size: 1rem; padding: 18px 24px;
       color: var(--primary-green);
     }
-    
-    /* INPUTS & SELECTS */
+
     .form-control, .form-select {
       background-color: var(--surface-white) !important;
       border: 1px solid rgba(27, 77, 44, 0.12) !important;
@@ -216,11 +265,8 @@
       border-color: var(--primary-green) !important;
       box-shadow: 0 0 10px rgba(27, 77, 44, 0.15);
     }
-    .form-control::placeholder {
-      color: #99a59d;
-    }
+    .form-control::placeholder { color: #99a59d; }
 
-    /* BUTTONS */
     .btn-success, .btn-primary, button[onclick*="submit"] {
       background: linear-gradient(135deg, var(--primary-green) 0%, #12331d 100%) !important;
       color: #ffffff !important;
@@ -247,7 +293,6 @@
       border-color: rgba(27, 77, 44, 0.3) !important;
     }
 
-    /* TABLES (Clean Light Aesthetic) */
     .table {
       background: var(--surface-white) !important;
       color: var(--text-dark) !important;
@@ -275,42 +320,28 @@
       background-color: rgba(27, 77, 44, 0.015) !important;
     }
 
-    /* CENTRALIZED CROP CLASS BADGES */
     .badge-cereal {
       background: rgba(229, 169, 59, 0.12) !important;
       color: #b07812 !important;
       border: 1px solid rgba(229, 169, 59, 0.25) !important;
-      font-weight: 600;
-      padding: 5px 12px;
-      border-radius: 20px;
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
+      font-weight: 600; padding: 5px 12px; border-radius: 20px;
+      display: inline-flex; align-items: center; gap: 5px;
     }
     .badge-potato {
       background: rgba(140, 98, 57, 0.12) !important;
       color: #704720 !important;
       border: 1px solid rgba(140, 98, 57, 0.25) !important;
-      font-weight: 600;
-      padding: 5px 12px;
-      border-radius: 20px;
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
+      font-weight: 600; padding: 5px 12px; border-radius: 20px;
+      display: inline-flex; align-items: center; gap: 5px;
     }
     .badge-undefined {
       background: rgba(120, 144, 156, 0.12) !important;
       color: #455a64 !important;
       border: 1px solid rgba(120, 144, 156, 0.25) !important;
-      font-weight: 600;
-      padding: 5px 12px;
-      border-radius: 20px;
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
+      font-weight: 600; padding: 5px 12px; border-radius: 20px;
+      display: inline-flex; align-items: center; gap: 5px;
     }
 
-    /* TOASTS */
     #toast-container { position: fixed; bottom: 24px; right: 24px; z-index: 9999; }
     .toast-msg {
       background: var(--surface-white); color: var(--text-dark); border-radius: 14px;
@@ -321,12 +352,8 @@
     }
     @keyframes slideIn { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
 
-    /* 📱 RESPONSIVE MEDIA QUERIES FOR SMARTPHONES */
     @media (max-width: 991.98px) {
-      .mobile-header {
-        display: flex;
-      }
-
+      .mobile-header { display: flex; }
       .sidebar {
         transform: translateX(-100%);
         position: fixed;
@@ -335,28 +362,35 @@
         width: 270px;
         box-shadow: 10px 0 30px rgba(0,0,0,0.15);
       }
-
-      .sidebar.active {
-        transform: translateX(0);
-      }
-
-      .main-content {
-        margin-left: 0 !important;
-        padding: 90px 16px 30px 16px;
-      }
-
-      .btn, button, .sidebar nav a {
-        white-space: nowrap !important;
-      }
+      .sidebar.active { transform: translateX(0); }
+      .main-content { margin-left: 0 !important; padding: 90px 16px 30px 16px; }
+      .btn, button, .sidebar nav a { white-space: nowrap !important; }
     }
   </style>
   {% block head %}{% endblock %}
 </head>
 <body>
 
+<!-- ═══════════════════════════════════════════════════
+     SPLASH SCREEN — يظهر عند فتح التطبيق فقط
+     ═══════════════════════════════════════════════════ -->
+<div id="splash-screen">
+  <img 
+    src="{{ url_for('static', filename='images/logo-agrinex.png') }}" 
+    alt="AgriNex Logo"
+    class="splash-logo"
+  >
+  <h1 class="splash-name">AgriNex</h1>
+  <p class="splash-slogan">Where Agriculture Meets AI and GIS</p>
+  <div class="splash-bar-wrap">
+    <div class="splash-bar"></div>
+  </div>
+</div>
+<!-- ═══════════════════════════════════════════════════ -->
+
 <div class="mobile-header">
   <a href="#" class="mobile-brand d-flex align-items-center gap-2" style="text-decoration: none;">
-    <img src="{{ url_for('static', filename='images/Design sans titre.svg') }}" alt="AgriNex Logo" style="height: 32px; width: auto;">
+    <img src="{{ url_for('static', filename='images/logo-agrinex.png') }}" alt="AgriNex Logo" style="height: 32px; width: auto;">
     <span class="fw-bold text-white" style="font-size: 1.25rem; letter-spacing: 0.5px;">AgriNex</span>
   </a>
   <button class="menu-toggle" id="menuToggleBtn">
@@ -366,7 +400,7 @@
 
 <div class="sidebar" id="appSidebar">
   <div class="sidebar-brand d-none d-lg-flex flex-column align-items-center text-center gap-2" style="padding: 30px 20px 20px 20px; border-bottom: 1px solid rgba(255,255,255,0.06); margin-bottom: 15px; width: 100%;">
-    <img src="{{ url_for('static', filename='images/Design sans titre.svg') }}" alt="AgriNex Logo" style="height: 50px; width: auto;">
+    <img src="{{ url_for('static', filename='images/logo-agrinex.png') }}" alt="AgriNex Logo" style="height: 50px; width: auto;">
     <h3 class="fw-bold text-white m-0" style="font-size: 1.45rem; letter-spacing: 0.5px;">AgriNex</h3>
     <span style="font-size: 0.72rem; color: rgba(255,255,255,0.65); white-space: normal; line-height: 1.4; font-weight: 500;">GeoAI Agricultural Platform</span>
   </div>
@@ -395,6 +429,34 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
+// ═══════════════════════════════════════════════════
+// SPLASH SCREEN — يختفي بعد تحميل الصفحة
+// ═══════════════════════════════════════════════════
+(function() {
+  // يظهر الـ splash فقط عند أول فتح للتطبيق (PWA launch)
+  // وليس عند كل تنقل بين الصفحات
+  const splashShown = sessionStorage.getItem('splashShown');
+  const splash = document.getElementById('splash-screen');
+
+  if (splashShown) {
+    // تم عرضه مسبقاً في هذه الجلسة → أخفه فوراً
+    if (splash) splash.style.display = 'none';
+  } else {
+    // أول مرة → اعرضه ثم أخفه بعد 2.5 ثانية
+    window.addEventListener('load', function() {
+      setTimeout(function() {
+        if (splash) {
+          splash.style.opacity = '0';
+          setTimeout(function() {
+            splash.style.display = 'none';
+            sessionStorage.setItem('splashShown', 'true');
+          }, 600);
+        }
+      }, 2500);
+    });
+  }
+})();
+
 function showToast(msg, type='success') {
   const c = document.getElementById('toast-container');
   const d = document.createElement('div');
@@ -405,14 +467,10 @@ function showToast(msg, type='success') {
   setTimeout(() => d.remove(), 4000);
 }
 
-// 🟢 جافاسكريبت ذكي لإظهار وإخفاء القائمة عند النقر على الموبايل
 document.getElementById('menuToggleBtn').addEventListener('click', function() {
   const sidebar = document.getElementById('appSidebar');
   const icon = this.querySelector('i');
-  
   sidebar.classList.toggle('active');
-  
-  // تغيير أيقونة القائمة إلى (X) عند الفتح والعودة عند الإغلاق
   if(sidebar.classList.contains('active')) {
     icon.className = 'fas fa-times';
   } else {
@@ -420,11 +478,9 @@ document.getElementById('menuToggleBtn').addEventListener('click', function() {
   }
 });
 
-// إغلاق القائمة تلقائياً إذا قمنا بالنقر خارجها في الموبايل لسهولة الاستخدام
 document.addEventListener('click', function(event) {
   const sidebar = document.getElementById('appSidebar');
   const toggleBtn = document.getElementById('menuToggleBtn');
-  
   if (window.innerWidth < 992 && 
       !sidebar.contains(event.target) && 
       !toggleBtn.contains(event.target) && 
@@ -434,7 +490,6 @@ document.addEventListener('click', function(event) {
   }
 });
 
-// Service Worker Registration
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('/sw.js')
