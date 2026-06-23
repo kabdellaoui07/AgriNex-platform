@@ -26,6 +26,9 @@ app.secret_key = 'agrocyber_secret_glass_key_2026'
 app.config['SESSION_COOKIE_HTTPONLY'] = True
 app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 
+# Copernicus Sentinel Hub WMS Configuration
+app.config['COPERNICUS_INSTANCE_ID'] = '3f9a697c-6241-4ba3-be27-7aa36f61f1bc'
+
 # ─────────────────────────────────────────────────────────────────────────
 #  DATABASE CONFIGURATION
 # ─────────────────────────────────────────────────────────────────────────
@@ -269,7 +272,8 @@ def map_view():
     survey_points = Survey.query.all()
     return render_template('map.html',
         predictions=json.dumps([p.to_dict() for p in predictions]),
-        training_points=json.dumps([s.to_dict() for s in survey_points])
+        training_points=json.dumps([s.to_dict() for s in survey_points]),
+        copernicus_instance_id=app.config.get('COPERNICUS_INSTANCE_ID')
     )
 
 @app.route('/statistics')

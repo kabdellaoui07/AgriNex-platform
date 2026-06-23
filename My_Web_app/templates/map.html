@@ -129,7 +129,7 @@
     </div>
     
     <button class="btn btn-outline-success btn-sm layer-btn" id="btn-ndvi" onclick="toggleNdvi()">
-      <i class="fas fa-leaf me-1"></i>NDVI (False Color)
+      <i class="fas fa-leaf me-1"></i>NDVI (Sentinel-2)
     </button>
   </div>
   <div class="col-md-4 text-end align-self-center">
@@ -147,7 +147,6 @@
           <i class="fas fa-calendar-days" style="font-size: 1.1rem; color: var(--primary-green);"></i>
           <span class="fw-bold text-dark" style="font-size: 0.95rem;">Date Timeline</span>
           <span class="badge border text-dark" id="date-range-display" style="font-size: 0.85rem; background: var(--bg-cream); border-color: var(--border-color) !important;">Loading dates...</span>
-          <span class="badge border text-dark fw-bold ms-2" id="ndvi-average-badge" style="display: none; font-size: 0.85rem; background: rgba(46, 204, 113, 0.1); border-color: rgba(46, 204, 113, 0.2) !important;">Average NDVI: —</span>
         </div>
         <div class="btn-group">
           <button class="btn btn-outline-secondary btn-sm py-0 px-2" style="font-size: 0.75rem;" onclick="setPresetDateRange('all')">All Time</button>
@@ -213,25 +212,9 @@
       </div>
     </div>
       
-      <!-- False Color options and legends -->
+      <!-- NDVI options and legends -->
       <div class="legend-box mb-3" id="ndvi-legend" style="display: none;">
-        <p class="text-muted small mb-2"><i class="fas fa-leaf me-1" style="color: var(--primary-green);"></i>False Color (NIR) Options</p>
-
-        <!-- WMS Source Selector -->
-        <div class="mb-2">
-          <label class="text-muted small mb-1" style="font-size: 0.75rem;">Telemetry Source:</label>
-          <select id="wms-mode-select" class="form-select form-select-sm py-0 px-2" style="font-size: 0.75rem; height: 26px;" onchange="changeWmsMode()">
-            <option value="simulated" selected>Simulated (Fast/Offline)</option>
-            <option value="live">Live Copernicus WMS</option>
-          </select>
-        </div>
-
-        <!-- Copernicus Instance ID Input -->
-        <div class="mb-3 d-none" id="wms-key-container">
-          <label class="text-muted small mb-1" style="font-size: 0.75rem;">Copernicus Instance ID:</label>
-          <input type="text" id="wms-instance-id" class="form-control form-control-sm" placeholder="Enter WMS Instance ID..." style="font-size: 0.75rem; height: 26px;" onchange="saveWmsInstanceId()">
-          <span class="text-muted xs-small" style="font-size: 0.65rem; display: block; margin-top: 2px; line-height: 1.2;">Get a free Instance ID at sh.dataspace.copernicus.eu</span>
-        </div>
+        <p class="text-muted small mb-2"><i class="fas fa-leaf me-1" style="color: var(--primary-green);"></i>NDVI (Sentinel-2) Options</p>
 
         <div class="mb-3">
           <div class="d-flex justify-content-between align-items-center mb-1">
@@ -241,13 +224,28 @@
           <input type="range" class="opacity-slider" id="ndvi-opacity-slider" min="10" max="100" value="85" oninput="updateNdviOpacity()">
         </div>
         
-        <!-- False Color Scale -->
-        <div id="scale-false-color">
-          <div style="height: 12px; background: linear-gradient(to right, #bebe96, #d87d82, #d82d3a); border-radius: 6px; margin-bottom: 5px;"></div>
-          <div class="d-flex justify-content-between text-muted small" style="font-size: 0.7rem;">
-            <span>Soil/Water (0.0)</span>
-            <span>Sparse (0.5)</span>
-            <span>Dense Veg (1.0)</span>
+        <!-- NDVI Color Scale -->
+        <p class="text-muted small mb-2 fw-bold" style="font-size: 0.75rem;">NDVI Classification Scale</p>
+        <div class="d-flex flex-column gap-1" style="font-size: 0.78rem;">
+          <div class="d-flex align-items-center gap-2">
+            <div style="width: 14px; height: 14px; border-radius: 4px; background: #fee0d2; border: 1px solid var(--border-color);"></div>
+            <span class="text-dark font-monospace">&lt; 0.0</span>
+            <span class="text-muted small">Water / Non-veg</span>
+          </div>
+          <div class="d-flex align-items-center gap-2">
+            <div style="width: 14px; height: 14px; border-radius: 4px; background: #e5f5e0; border: 1px solid var(--border-color);"></div>
+            <span class="text-dark font-monospace">0.0 – 0.2</span>
+            <span class="text-muted small">Bare Soil</span>
+          </div>
+          <div class="d-flex align-items-center gap-2">
+            <div style="width: 14px; height: 14px; border-radius: 4px; background: #a1d99b; border: 1px solid var(--border-color);"></div>
+            <span class="text-dark font-monospace">0.2 – 0.5</span>
+            <span class="text-muted small">Moderate Veg</span>
+          </div>
+          <div class="d-flex align-items-center gap-2">
+            <div style="width: 14px; height: 14px; border-radius: 4px; background: #006d2c; border: 1px solid var(--border-color);"></div>
+            <span class="text-dark font-monospace">&gt; 0.5</span>
+            <span class="text-muted small">Dense Veg</span>
           </div>
         </div>
       </div>
@@ -266,6 +264,7 @@
 const predictions    = {{ predictions|safe }};
 const trainingPoints = {{ training_points|safe }};
 const CLASS_COLORS   = { 'cereal':'#e5a93b', 'potato':'#8c6239', 'undefined':'#78909c' };
+const COPERNICUS_INSTANCE_ID = "{{ copernicus_instance_id }}";
 
 const algeriaBounds = L.latLngBounds(L.latLng(18.0, -9.0), L.latLng(38.0, 12.0));
 
@@ -296,134 +295,7 @@ const tileUrls = {
   topo: 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png'
 };
 
-// Custom Leaflet TileLayer for real-time, client-side Sentinel-2 simulation
-L.TileLayer.SentinelSim = L.TileLayer.extend({
-  createTile: function (coords, done) {
-    const tile = document.createElement('canvas');
-    tile.width = 256;
-    tile.height = 256;
-    const ctx = tile.getContext('2d');
-
-    const img = new Image();
-    img.crossOrigin = "Anonymous";
-    
-    const self = this;
-    img.onload = function () {
-      ctx.drawImage(img, 0, 0);
-      try {
-        const imgData = ctx.getImageData(0, 0, 256, 256);
-        const data = imgData.data;
-        const mode = self.options.mode; // 'ndvi' or 'falseColor'
-        const avgNdvi = self.options.avgNdvi ? parseFloat(self.options.avgNdvi) : 0.5;
-        
-        // Dynamic shift to account for seasonal variations based on timeline selection
-        const ndviShift = (avgNdvi - 0.45) * 0.15;
-        const nirAdjustment = 1.0 + (avgNdvi - 0.45) * 0.3;
-        
-        for (let i = 0; i < data.length; i += 4) {
-          const R = data[i];
-          const G = data[i+1];
-          const B = data[i+2];
-          
-          const r = R / 255;
-          const g = G / 255;
-          const b = B / 255;
-          
-          // 1. Simulate NIR (B8) based on physical vegetation spectral properties
-          let b8;
-          if (g > r && g > b) {
-            // Vegetation reflects NIR very strongly
-            const greenness = (g - r) / (g + r + 0.001);
-            b8 = g * (1.25 + 1.8 * greenness);
-          } else {
-            // Soil / Urban / Water has low to moderate NIR reflectance
-            b8 = r * 0.95 + g * 0.05;
-          }
-          
-          b8 = Math.min(1.0, Math.max(0.0, b8));
-          const b4 = r; // Sentinel-2 B4 (Red)
-          
-          if (mode === 'ndvi') {
-            // NDVI = (B8 - B4) / (B8 + B4)
-            let ndvi = 0.0;
-            if (b8 + b4 > 0) {
-              ndvi = (b8 - b4) / (b8 + b4);
-            }
-            ndvi += ndviShift; // Apply dynamic seasonal shift
-            ndvi = Math.min(1.0, Math.max(-1.0, ndvi));
-            
-            // Classification color mapping
-            // A. Water detection (low reflectance, blue bias)
-            if (b > r && r < 0.18 && g < 0.2 && b < 0.3) {
-              data[i]   = 28;   // R
-              data[i+1] = 54;   // G
-              data[i+2] = 124;  // B
-            }
-            // B. Urban areas and roads (flat neutral spectra, greyish/slate)
-            else if (Math.abs(r - g) < 0.06 && Math.abs(r - b) < 0.06 && r > 0.18) {
-              const grey = Math.round((r * 0.2989 + g * 0.5870 + b * 0.1140) * 255);
-              data[i]   = Math.max(0, grey - 15);
-              data[i+1] = grey;
-              data[i+2] = Math.min(255, grey + 15);
-            }
-            // C. Vegetation & Soil classes
-            else {
-              if (ndvi < 0.12) {
-                // Low vegetation / bare soil -> Red
-                const t = Math.max(0, (ndvi - (-0.2)) / 0.32);
-                data[i]   = 215;
-                data[i+1] = Math.round(50 + t * 70);
-                data[i+2] = 50;
-              } else if (ndvi < 0.45) {
-                // Moderate vegetation -> Yellow
-                const t = (ndvi - 0.12) / 0.33;
-                data[i]   = Math.round(235 * (1 - t) + 140 * t);
-                data[i+1] = Math.round(180 * (1 - t) + 215 * t);
-                data[i+2] = Math.round(55 * (1 - t) + 55 * t);
-              } else {
-                // Dense vegetation -> Lush Green
-                const t = Math.min(1.0, (ndvi - 0.45) / 0.55);
-                data[i]   = Math.round(80 * (1 - t) + 18 * t);
-                data[i+1] = Math.round(180 * (1 - t) + 110 * t);
-                data[i+2] = Math.round(50 * (1 - t) + 28 * t);
-              }
-            }
-          } else {
-            // False-color (NIR = B8, Red = B4, Green = B3) -> (R = B8, G = B4, B = B3)
-            // Soften contrast and oversaturation by blending 15% original color
-            let outR = 0.85 * (b8 * nirAdjustment) + 0.15 * r;
-            let outG = 0.85 * r + 0.15 * g;
-            let outB = 0.85 * g + 0.15 * b;
-            
-            // Gamma correction to enhance visual clarity
-            outR = Math.pow(outR, 0.95);
-            outG = Math.pow(outG, 0.95);
-            outB = Math.pow(outB, 0.95);
-            
-            data[i]   = Math.round(outR * 255);
-            data[i+1] = Math.round(outG * 255);
-            data[i+2] = Math.round(outB * 255);
-          }
-        }
-        ctx.putImageData(imgData, 0, 0);
-        done(null, tile);
-      } catch (err) {
-        // Fallback: draw raw satellite image if CORS block occurs
-        ctx.drawImage(img, 0, 0);
-        done(null, tile);
-      }
-    };
-    img.onerror = function (err) {
-      done(err, tile);
-    };
-    img.src = this.getTileUrl(coords);
-    return tile;
-  }
-});
-
-L.tileLayer.sentinelSim = function (url, options) {
-  return new L.TileLayer.SentinelSim(url, options);
-};
+// SentinelSim client-side simulation has been replaced with real Copernicus WMS NDVI layer.
 
 let currentTileLayer = null;
 
@@ -701,29 +573,7 @@ function setPresetDateRange(preset) {
   applyDateFilter();
 }
 
-// Calculate realistic seasonal crop indices for Algeria
-function calculateMockNdviAverage(startDate, endDate) {
-  const midTime = (startDate.getTime() + endDate.getTime()) / 2;
-  const midDate = new Date(midTime);
-  const month = midDate.getMonth(); // 0 - 11
-  
-  // Spring (Mar-May): High NDVI (0.65-0.78)
-  // Summer (Jun-Aug): Med/Low (0.35-0.48)
-  // Autumn (Sep-Nov): Low/Dry (0.22-0.34)
-  // Winter (Dec-Feb): Medium (0.48-0.62)
-  let baseNdvi = 0.45;
-  if (month >= 2 && month <= 4) {
-    baseNdvi = 0.68 + Math.sin(midDate.getDate()) * 0.05;
-  } else if (month >= 5 && month <= 7) {
-    baseNdvi = 0.41 + Math.sin(midDate.getDate()) * 0.04;
-  } else if (month >= 8 && month <= 10) {
-    baseNdvi = 0.29 + Math.sin(midDate.getDate()) * 0.03;
-  } else {
-    baseNdvi = 0.55 + Math.sin(midDate.getDate()) * 0.05;
-  }
 
-  return baseNdvi.toFixed(2);
-}
 
 function filterMarkers(startDate, endDate) {
   predGroup.clearLayers();
@@ -811,20 +661,11 @@ function applyDateFilter() {
 
   filterMarkers(startVal, endVal);
 
-  const avgNdvi = calculateMockNdviAverage(startVal, endVal);
-  const badge = document.getElementById('ndvi-average-badge');
-  badge.innerText = `Average NDVI: ${avgNdvi}`;
-
-  // Update WMS or redraw SentinelSim tile layer
-  if (currentNdviLayer) {
-    if (document.getElementById('wms-mode-select').value === 'live' && typeof currentNdviLayer.setParams === 'function') {
-      const startStr = startVal.toISOString().split('T')[0];
-      const endStr = endVal.toISOString().split('T')[0];
-      currentNdviLayer.setParams({ time: `${startStr}/${endStr}` });
-    } else {
-      currentNdviLayer.options.avgNdvi = avgNdvi;
-      currentNdviLayer.redraw();
-    }
+  // Update WMS layers with new date filter range
+  if (currentNdviLayer && typeof currentNdviLayer.setParams === 'function') {
+    const startStr = startVal.toISOString().split('T')[0];
+    const endStr = endVal.toISOString().split('T')[0];
+    currentNdviLayer.setParams({ time: `${startStr}/${endStr}` });
   }
 }
 
@@ -832,94 +673,46 @@ function applyDateFilter() {
 //  SENTINEL-2 NDVI & FALSE-COLOR LAYER MANAGEMENT
 // ─────────────────────────────────────────────────────────────────────────
 
-// Load WMS Instance ID from LocalStorage on load
-document.addEventListener('DOMContentLoaded', () => {
-  const savedId = localStorage.getItem('sentinel_wms_instance_id');
-  if (savedId) {
-    document.getElementById('wms-instance-id').value = savedId;
-  }
-});
-
-function saveWmsInstanceId() {
-  const instanceId = document.getElementById('wms-instance-id').value.trim();
-  localStorage.setItem('sentinel_wms_instance_id', instanceId);
-  showToast("WMS Instance ID saved", "success");
-  if (ndviActive && document.getElementById('wms-mode-select').value === 'live') {
-    if (currentNdviLayer) { map.removeLayer(currentNdviLayer); }
-    loadNdviLayer();
-  }
-}
-
-function changeWmsMode() {
-  const mode = document.getElementById('wms-mode-select').value;
-  const keyContainer = document.getElementById('wms-key-container');
-  
-  if (mode === 'live') {
-    keyContainer.classList.remove('d-none');
-    const instanceId = document.getElementById('wms-instance-id').value.trim();
-    if (!instanceId) {
-      showToast("Please enter your Copernicus Instance ID", "warning");
-    }
-  } else {
-    keyContainer.classList.add('d-none');
-  }
-  
-  if (ndviActive) {
-    if (currentNdviLayer) { map.removeLayer(currentNdviLayer); }
-    loadNdviLayer();
-  }
-}
-
 function loadNdviLayer() {
-  const mode = document.getElementById('wms-mode-select').value;
   const startVal = new Date(document.getElementById('filter-start-date').value);
   const endVal = new Date(document.getElementById('filter-end-date').value);
-  const avgNdvi = calculateMockNdviAverage(startVal, endVal);
   const opacityVal = document.getElementById('ndvi-opacity-slider').value / 100;
 
-  if (mode === 'live') {
-    const instanceId = document.getElementById('wms-instance-id').value.trim();
-    if (!instanceId) {
-      showToast("Live mode active, but Copernicus Instance ID is missing. Falling back to Simulated.", "warning");
-      currentNdviLayer = L.tileLayer.sentinelSim(tileUrls.satellite, { 
-        attribution: 'AgriNex',
-        pane: 'geePane',
-        mode: 'falseColor',
-        avgNdvi: avgNdvi
-      });
-    } else {
-      const startStr = startVal.toISOString().split('T')[0];
-      const endStr = endVal.toISOString().split('T')[0];
-      
-      currentNdviLayer = L.tileLayer.wms('https://sh.dataspace.copernicus.eu/ogc/wms/' + instanceId, {
-        layers: 'FALSE_COLOR',
-        format: 'image/png',
-        transparent: true,
-        attribution: '© Copernicus Data Space Ecosystem',
-        pane: 'geePane',
-        time: `${startStr}/${endStr}`,
-        maxcc: 20
-      });
-      showToast("Loading live Sentinel-2 False Color from Copernicus WMS...", "success");
+  if (!COPERNICUS_INSTANCE_ID) {
+    showToast("Copernicus Instance ID is not configured on the server backend.", "warning");
+    if (currentNdviLayer) {
+      map.removeLayer(currentNdviLayer);
+      currentNdviLayer = null;
     }
-  } else {
-    currentNdviLayer = L.tileLayer.sentinelSim(tileUrls.satellite, { 
-      attribution: 'AgriNex',
-      pane: 'geePane',
-      mode: 'falseColor',
-      avgNdvi: avgNdvi
-    });
-    showToast("Showing Simulated False Color (NIR) Layer", "success");
+    return;
   }
+
+  const startStr = startVal.toISOString().split('T')[0];
+  const endStr = endVal.toISOString().split('T')[0];
+
+  if (currentNdviLayer) {
+    map.removeLayer(currentNdviLayer);
+  }
+
+  currentNdviLayer = L.tileLayer.wms('https://sh.dataspace.copernicus.eu/ogc/wms/' + COPERNICUS_INSTANCE_ID, {
+    layers: 'NDVI',
+    format: 'image/png',
+    transparent: true,
+    attribution: '© Copernicus Data Space Ecosystem',
+    pane: 'geePane',
+    time: `${startStr}/${endStr}`,
+    maxcc: 20,
+    showlogo: false
+  });
 
   currentNdviLayer.setOpacity(opacityVal);
   currentNdviLayer.addTo(map);
+  showToast("Loading real Sentinel-2 NDVI layer from Copernicus WMS...", "success");
 }
 
 function toggleNdvi() {
   const btn = document.getElementById('btn-ndvi');
   const ndviLegend = document.getElementById('ndvi-legend');
-  const avgBadge = document.getElementById('ndvi-average-badge');
   
   if (ndviActive) {
     ndviActive = false;
@@ -931,8 +724,7 @@ function toggleNdvi() {
       currentNdviLayer = null;
     }
     ndviLegend.style.display = 'none';
-    avgBadge.style.display = 'none';
-    showToast("False Color (NIR) layer disabled", "success");
+    showToast("NDVI layer disabled", "success");
   } else {
     ndviActive = true;
     btn.classList.add('active');
@@ -941,7 +733,6 @@ function toggleNdvi() {
     loadNdviLayer();
     
     ndviLegend.style.display = 'block';
-    avgBadge.style.display = 'inline-block';
   }
 }
 
