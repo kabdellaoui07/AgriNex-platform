@@ -96,12 +96,19 @@ class Survey(db.Model):
     longitude = column_property(func.ST_X(geom))
 
     def to_dict(self):
+        import os
         return {
             'fid': self.fid,
+            'id': self.fid,
             'classe': self.classe,
+            'class_label': self.classe if self.classe else 'undefined',
             'latitude': self.latitude,
             'longitude': self.longitude,
-            'date': self.Date.strftime('%Y-%m-%d') if self.Date else None
+            'date': self.Date.strftime('%Y-%m-%d') if self.Date else None,
+            'acquisition_date': self.Date.strftime('%Y-%m-%d') if self.Date else None,
+            'image_name': os.path.basename(self.Photo) if self.Photo else None,
+            'source': 'QGIS / Mergin Map',
+            'notes': ''
         }
 # ─────────────────────────────────────────────────────────────────────────
 #  🎯 GLOBAL ROUTE GUARD & ROLE SECURITY
@@ -288,6 +295,45 @@ def statistics():
 @admin_required
 def sampling():
     return render_template('sampling.html')
+
+@app.route('/api/sampling-data')
+@admin_required
+def get_sampling_data():
+    training = [s.to_dict() for s in Survey.query.all()]
+    new_data = [p.to_dict() for p in Prediction.query.all()]
+    return jsonify({
+        'training_data': training,
+        'new_data': new_data
+    })
+
+@app.route('/api/import_training', methods=['POST'])
+@admin_required
+def import_training():
+    data = request.get_json()
+    count = 0
+    max_fid_row = db.session.query(func.max(Survey.fid)).first()
+    max_fid = max_fid_row[0] if (max_fid_row and max_fid_row[0] is not None) else 0
+    
+    for row in data.get('features', []):
+        props = row.get('properties', {})
+        coords = row.get('geometry', {}).get('coordinates', [None, None])
+        lat = coords[1]
+        lon = coords[0]
+        if lat is None or lon is None:
+            continue
+            
+        max_fid += 1
+        sv = Survey(
+            fid=max_fid,
+            classe=props.get('class_label'),
+            Photo=props.get('image_name'),
+            Date=datetime.strptime(props['date'], '%Y-%m-%d') if props.get('date') else None,
+            geom=WKTElement(f'POINT({lon} {lat})', srid=4326)
+        )
+        db.session.add(sv)
+        count += 1
+    db.session.commit()
+    return jsonify({'imported': count})
 @app.route('/get_predictions_geojson')
  # @admin_required
 def get_predictions_geojson():
