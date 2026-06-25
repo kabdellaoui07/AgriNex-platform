@@ -244,7 +244,7 @@ def upload():
         features.append({
             "type": "Feature",
             "geometry": {"type": "Point", "coordinates": [p.longitude, p.latitude]},
-            "properties": {"id": p.id, "class": p.predicted_class, "confidence": p.confidence}
+            "properties": {"id": p.id, "class": p.predicted_class, "confidence": p.confidence, "image_path": p.image_path}
         })
     
     geojson_path = os.path.join(app.root_path, 'static', 'predictions.geojson')
@@ -356,6 +356,7 @@ def get_predictions_geojson():
                 "user_id": p.user_id,
                 "class": p.predicted_class,
                 "confidence": p.confidence,
+                "image_path": p.image_path,
                 "notes": p.notes
             }
         })
@@ -375,7 +376,8 @@ def get_survey_geojson():
             "properties": {
                 "fid": s.fid,
                 "classe": s.classe,
-                "date": str(s.Date)
+                "date": str(s.Date),
+                "image_name": os.path.basename(s.Photo) if s.Photo else None
             }
         })
     return jsonify({"type": "FeatureCollection", "features": features})

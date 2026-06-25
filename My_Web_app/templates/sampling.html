@@ -816,14 +816,14 @@
         if (format === 'csv') {
             let csvContent = '';
             if (isFieldTab) {
-                csvContent += 'ID,Predicted_Class,Confidence,Latitude,Longitude,Timestamp,Notes\n';
+                csvContent += 'ID,Predicted_Class,Confidence,Latitude,Longitude,Timestamp,Image_Path,Notes\n';
                 data.forEach(item => {
-                    csvContent += `${item.id},${item.predicted_class},${item.confidence},${item.latitude},${item.longitude},"${item.timestamp}","${(item.notes || '').replace(/"/g, '""')}"\n`;
+                    csvContent += `${item.id},${item.predicted_class},${item.confidence},${item.latitude},${item.longitude},"${item.timestamp}","${item.image_path || ''}","${(item.notes || '').replace(/"/g, '""')}"\n`;
                 });
             } else {
-                csvContent += 'ID,Class_Label,Latitude,Longitude,Acquisition_Date,Source,Notes\n';
+                csvContent += 'ID,Class_Label,Latitude,Longitude,Acquisition_Date,Source,Image_Name,Notes\n';
                 data.forEach(item => {
-                    csvContent += `${item.id},${item.class_label},${item.latitude},${item.longitude},"${item.acquisition_date || ''}","${item.source || ''}","${(item.notes || '').replace(/"/g, '""')}"\n`;
+                    csvContent += `${item.id},${item.class_label},${item.latitude},${item.longitude},"${item.acquisition_date || ''}","${item.source || ''}","${item.image_name || ''}","${(item.notes || '').replace(/"/g, '""')}"\n`;
                 });
             }
             triggerFileDownload(csvContent, `${filename}.csv`, 'text/csv');
@@ -842,7 +842,8 @@
                         confidence: isFieldTab ? item.confidence : null,
                         notes: item.notes || null,
                         date: isFieldTab ? item.timestamp : item.acquisition_date,
-                        source: isFieldTab ? "Field Collection" : (item.source || "QGIS/Mergin Map")
+                        source: isFieldTab ? "Field Collection" : (item.source || "QGIS/Mergin Map"),
+                        image_name: isFieldTab ? item.image_path : item.image_name
                     }
                 }))
             };

@@ -702,7 +702,8 @@ function loadNdviLayer() {
     pane: 'geePane',
     time: `${startStr}/${endStr}`,
     maxcc: 20,
-    showlogo: false
+    showlogo: false,
+    minZoom: 7
   });
 
   currentNdviLayer.setOpacity(opacityVal);
@@ -731,6 +732,10 @@ function toggleNdvi() {
     btn.classList.replace('btn-outline-success', 'btn-success');
     
     loadNdviLayer();
+    
+    if (map.getZoom() < 7) {
+      showToast("Please zoom in to view the NDVI layer (Zoom level 7+ required).", "info");
+    }
     
     ndviLegend.style.display = 'block';
   }
